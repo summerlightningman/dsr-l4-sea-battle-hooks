@@ -1,0 +1,29 @@
+.game-state {
+    height: 120px;
+}
+
+.game-state__header {
+    text-align: center;
+    font-family: "Roboto Thin", sans-serif;
+}
+
+.control-panel {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: auto;
+    padding: 20px 10%;
+}
+
+.control-panel > * {
+    width: 33%;
+}
+
+.control-panel__btn {
+    padding: 5px;
+    border: none;
+}
+
+.control-panel__text {
+    text-align: center;
+}

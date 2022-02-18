@@ -1,0 +1,27 @@
+.cell {
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.cell_has-ship {
+    background: mediumaquamarine;
+    box-shadow: inset 0 0 15px aqua;
+}
+
+.cell_killed {
+    background: black;
+    box-shadow: inset 0 0 15px tomato;
+}
+
+.cell_missed {
+    background: beige;
+    box-shadow: inset 0 0 15px black;
+}
+
+.cell:hover {
+    border: 3px solid black;
+}
+
+.cell:active {
+    border-radius: 7px;
+}

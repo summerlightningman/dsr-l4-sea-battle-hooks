@@ -12,6 +12,7 @@ import Board from './board';
 import '../styles/app.css';
 
 class App extends Component<AppProps, AppState> {
+
     constructor(props: AppProps) {
         super(props);
         this.state = new AppInitialState();
@@ -20,6 +21,7 @@ class App extends Component<AppProps, AppState> {
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
         this.attack = this.attack.bind(this);
+
     }
 
     setInitialState() {
@@ -56,34 +58,28 @@ class App extends Component<AppProps, AppState> {
         const {players, gameState} = this.state;
         switch (gameState.stage) {
             case GameStage.SHIP_PLACEMENT:
-                if (players[PlayerNum.ONE].shipsRemainingForBuild() === 0)
+                if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
                     return this.setState({
-                        gameState: new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                        gameState: new GameState(players[PlayerNum.ONE], GameStage.GAMEPLAY)
                     });
-                if (players[PlayerNum.TWO].shipsRemainingForBuild() === 0)
-                    return this.setState({
-                        gameState: new GameState(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
-                    });
-                return
+
+                return this.setState({
+                    gameState: new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                });
+
             case GameStage.MOVE_CONFIRMATION:
                 return this.setState({
                     gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
                 })
 
         }
-
     }
 
     render() {
-        const handleCellClick = this.state.gameState.stage === GameStage.SHIP_PLACEMENT
-            ? this.placeShip
-            : this.attack
-
         return <main>
             <GameInfo
                 currState={this.state.gameState}
                 resetAll={this.setInitialState}
-                goToNextState={this.goToNextState}
             />
             <div className="game-boards">
                 {Object.values(this.state.players).map(
@@ -92,8 +88,10 @@ class App extends Component<AppProps, AppState> {
                             player={player}
                             key={player.name}
                             currState={this.state.gameState}
-                            onCellClick={handleCellClick(player.name)}
-                        />
+                            onCellClick={this.placeShip(player.name)}
+                        >
+                            <button onClick={this.goToNextState}>Подтвердить ход</button>
+                        </Board>
                 )
                 }
             </div>

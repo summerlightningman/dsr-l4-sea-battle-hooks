@@ -1,4 +1,4 @@
-import {GameStage} from "../types/common";
+import {GameStage, PlayerNum} from "../types/common";
 import Player from "./player";
 
 class GameState {
@@ -9,14 +9,23 @@ class GameState {
         this.player = player;
         this.stage = stage;
 
-        this.clone = this.clone.bind(this);
+
         this.toString = this.toString.bind(this);
+        this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
     }
 
-    clone() {
-        const gameState = new GameState(this.player);
-        gameState.stage = this.stage;
-        return gameState
+
+    isReadyForNextStage() {
+        switch (this.stage) {
+            case GameStage.SHIP_PLACEMENT:
+                if (this.player.name === PlayerNum.ONE && !this.player.shipsRemainingForBuild())
+                    return true
+                return this.player.name === PlayerNum.TWO && !this.player.shipsRemainingForBuild();
+            case GameStage.MOVE_CONFIRMATION:
+                return false
+            case GameStage.GAMEPLAY:
+                return false
+        }
     }
 
     toString() {

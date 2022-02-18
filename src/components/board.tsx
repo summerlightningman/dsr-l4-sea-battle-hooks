@@ -20,7 +20,6 @@ class Board extends Component<BoardProps> {
 
         const cellList = generateCells(boardWidth, boardHeight).map(
             ([x, y]) => {
-                debugger;
                 if (this.props.currState.stage === GameStage.GAMEPLAY && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
                     const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
                     return <Cell
@@ -52,6 +51,7 @@ class Board extends Component<BoardProps> {
                  }>
                 {cellList}
             </div>
+            {this.props.currState.isReadyForNextStage() && this.props.children}
         </div>;
     }
 }

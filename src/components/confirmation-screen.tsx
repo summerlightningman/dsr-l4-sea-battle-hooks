@@ -6,7 +6,8 @@ import '../styles/confirmation-screen.css';
 class ConfirmationScreen extends Component<ConfirmationScreenProps, ConfirmationScreenState> {
     render() {
         return <div className="confirmation-screen">
-
+            <h1>{this.props.playerName}</h1>
+            <button>Начать ход</button>
         </div>
     }
 }

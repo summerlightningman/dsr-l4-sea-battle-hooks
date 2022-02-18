@@ -2,14 +2,15 @@ import React, {Component} from 'react'
 
 import {AppProps, AppState} from '../types/app';
 
-import {GameStage, PlayerNum} from "../types/common";
-import {AppInitialState} from "../classes/app-initial-state";
-import GameState from "../classes/game-state";
+import {GameStage, PlayerNum} from '../types/common';
+import {AppInitialState} from '../classes/app-initial-state';
+import GameState from '../classes/game-state';
 
 import GameInfo from './game-info';
 import Board from './board';
 
 import '../styles/app.css';
+import ConfirmationScreen from "./confirmation-screen";
 
 class App extends Component<AppProps, AppState> {
 
@@ -60,7 +61,7 @@ class App extends Component<AppProps, AppState> {
             case GameStage.SHIP_PLACEMENT:
                 if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
                     return this.setState({
-                        gameState: new GameState(players[PlayerNum.ONE], GameStage.GAMEPLAY)
+                        gameState: new GameState(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
                     });
 
                 return this.setState({
@@ -72,29 +73,35 @@ class App extends Component<AppProps, AppState> {
                     gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
                 })
 
+            case GameStage.GAMEPLAY:
+                
         }
     }
 
+
     render() {
+        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameState.player.name}/>
+        const gameBoards = <div className="game-boards">
+            {Object.values(this.state.players).map(
+                (player) =>
+                    <Board
+                        player={player}
+                        key={player.name}
+                        currState={this.state.gameState}
+                        onCellClick={this.placeShip(player.name)}
+                    >
+                        <button onClick={this.goToNextState}>Подтвердить ход</button>
+                    </Board>
+            )
+            }
+        </div>;
+
         return <main>
             <GameInfo
                 currState={this.state.gameState}
                 resetAll={this.setInitialState}
             />
-            <div className="game-boards">
-                {Object.values(this.state.players).map(
-                    (player) =>
-                        <Board
-                            player={player}
-                            key={player.name}
-                            currState={this.state.gameState}
-                            onCellClick={this.placeShip(player.name)}
-                        >
-                            <button onClick={this.goToNextState}>Подтвердить ход</button>
-                        </Board>
-                )
-                }
-            </div>
+            {this.state.gameState.stage === GameStage.MOVE_CONFIRMATION ? confirmationScreen : gameBoards}
         </main>
     }
 }

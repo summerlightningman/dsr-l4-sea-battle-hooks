@@ -21,6 +21,7 @@ class GameState {
         this.toggleTarget = this.toggleTarget.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getActionButtonName = this.getActionButtonName.bind(this);
+        this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
     }
 
     private clone(){
@@ -53,6 +54,10 @@ class GameState {
             default:
                 return false
         }
+    }
+
+    getEnemyPlayerName(): PlayerNum {
+        return this.player.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
     }
 
     toString() {

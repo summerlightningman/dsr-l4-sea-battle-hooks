@@ -12,6 +12,7 @@ import Board from './board';
 import '../styles/app.css';
 import ConfirmationScreen from "./confirmation-screen";
 import ActionButton from "./action-button";
+import {CellType} from "../types/cell";
 
 
 class App extends Component<AppProps, AppState> {
@@ -72,11 +73,30 @@ class App extends Component<AppProps, AppState> {
                     gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
                 })
 
+            case GameStage.GAMEPLAY:
+                const enemy = players[gameState.getEnemyPlayerName()];
+                const [x, y] = gameState.attackedCell;
+                if (enemy.cells[x][y] === CellType.KILLED)
+                    return this.setState({
+                        gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
+                    })
+
+                return this.setState({
+                    gameState: new GameState(enemy, GameStage.MOVE_CONFIRMATION)
+                })
         }
     }
 
     confirmAttack() {
+        const {gameState, players} = this.state;
+        const [x, y] = gameState.attackedCell;
+        const enemyName = gameState.getEnemyPlayerName()
+        const updatedPlayer = players[enemyName].attack(x, y);
 
+        this.setState(state => ({
+            players: {...state.players, [enemyName]: updatedPlayer}
+        }));
+        return this.goToNextState()
     }
 
     render() {

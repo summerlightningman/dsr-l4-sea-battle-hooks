@@ -1,13 +1,13 @@
 import {Component} from 'react';
 
 import {BoardProps} from '../types/board';
-import {generateCells} from "../functions";
+import {generateCells, isEquals} from "../functions";
 import {boardHeight, boardWidth, cellSize} from "../config";
 import {GameStage} from "../types/common";
 import Cell from "./cell";
+import {CellType} from "../types/cell";
 
 import '../styles/board.css';
-import {CellType} from "../types/cell";
 
 class Board extends Component<BoardProps> {
 
@@ -20,6 +20,13 @@ class Board extends Component<BoardProps> {
 
         const cellList = generateCells(boardWidth, boardHeight).map(
             ([x, y]) => {
+                if (isEquals(this.props.currState.attackedCell, [x, y]))
+                    return <Cell
+                        key={`${x}${y}`}
+                        cellState={CellType.ATTACKED}
+                        // @ts-ignore
+                        onCellClick={this.props.onCellClick(x, y)}
+                    />
                 if (this.props.currState.stage === GameStage.GAMEPLAY && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
                     const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
                     return <Cell

@@ -15,7 +15,6 @@ class Cell extends Component<CellProps> {
             [CellType.KILLED]: ' cell_killed'
         }
 
-
         const className = 'cell' + style[this.props.cellState];
         return <div className={className} style={{width: cellSize, height: cellSize}} onClick={this.props.onCellClick}>
 

@@ -7,6 +7,7 @@ import {GameStage} from "../types/common";
 import Cell from "./cell";
 
 import '../styles/board.css';
+import {CellType} from "../types/cell";
 
 class Board extends Component<BoardProps> {
 
@@ -18,13 +19,26 @@ class Board extends Component<BoardProps> {
             return <></>
 
         const cellList = generateCells(boardWidth, boardHeight).map(
-            ([x, y]) =>
-                <Cell
-                    key={`${x}${y}`}
-                    cellState={this.props.player.arena[x][y]}
-                    // @ts-ignore
-                    onCellClick={this.props.onCellClick(x, y)}
-                />
+            ([x, y]) => {
+                debugger;
+                if (this.props.currState.stage === GameStage.GAMEPLAY && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
+                    const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
+                    return <Cell
+                        key={`${x}${y}`}
+                        cellState={cellState}
+                        // @ts-ignore
+                        onCellClick={this.props.onCellClick(x, y)}
+                    />
+                } else {
+                    return <Cell
+                        key={`${x}${y}`}
+                        cellState={this.props.player.cells[x][y]}
+                        // @ts-ignore
+                        onCellClick={this.props.onCellClick(x, y)}
+                    />
+
+                }
+            }
         );
 
         return <div className="board">

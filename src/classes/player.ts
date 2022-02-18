@@ -5,13 +5,13 @@ import {CellType} from "../types/cell";
 
 
 class Player {
-    arena: Arena;
+    cells: Arena;
     name: PlayerNum;
     isVisible: boolean;
 
     constructor(name: PlayerNum, isVisible = true) {
         this.name = name;
-        this.arena = generateArena(boardWidth, boardHeight);
+        this.cells = generateArena(boardWidth, boardHeight);
         this.isVisible = isVisible;
 
         this.aliveShipsCount = this.aliveShipsCount.bind(this);
@@ -24,12 +24,12 @@ class Player {
 
     private setCellType(x: number, y: number, type: CellType) {
         const updatedPlayer = this.clonePlayer();
-        updatedPlayer.arena[x][y] = type;
+        updatedPlayer.cells[x][y] = type;
         return updatedPlayer
     }
 
     aliveShipsCount() {
-        return this.arena.reduce((acc, val) =>
+        return this.cells.reduce((acc, val) =>
             acc + val.reduce((acc_, val_) => val_ === CellType.HAS_SHIP ? acc_ + 1 : acc_, 0), 0);
     }
 
@@ -39,12 +39,12 @@ class Player {
 
     private clonePlayer(): Player {
         const player = new Player(this.name);
-        player.arena = this.arena;
+        player.cells = this.cells;
         return player
     }
 
     placeShip(x: number, y: number): Player {
-        if (this.arena[x][y] === CellType.HAS_SHIP) {
+        if (this.cells[x][y] === CellType.HAS_SHIP) {
             return this.setCellType(x, y, CellType.EMPTY)
         } else {
             if (this.aliveShipsCount() >= shipCount)
@@ -54,7 +54,7 @@ class Player {
     }
 
     attack(x: number, y: number): Player {
-        const cellState = this.arena[x][y];
+        const cellState = this.cells[x][y];
         if (cellState === CellType.EMPTY)
             return this.setCellType(x, y, CellType.MISSED)
         if (cellState === CellType.HAS_SHIP)

@@ -54,17 +54,23 @@ class App extends Component<AppProps, AppState> {
 
     goToNextState() {
         const {players, gameState} = this.state;
-        if (players[PlayerNum.ONE].shipsRemainingForBuild() === 0 && gameState.stage === GameStage.SHIP_PLACEMENT)
-            this.setState({
-                gameState: new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
-            });
+        switch (gameState.stage) {
+            case GameStage.SHIP_PLACEMENT:
+                if (players[PlayerNum.ONE].shipsRemainingForBuild() === 0)
+                    return this.setState({
+                        gameState: new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                    });
+                if (players[PlayerNum.TWO].shipsRemainingForBuild() === 0)
+                    return this.setState({
+                        gameState: new GameState(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
+                    });
+                return
+            case GameStage.MOVE_CONFIRMATION:
+                return this.setState({
+                    gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
+                })
 
-        if (players[PlayerNum.ONE].shipsRemainingForBuild() === 0
-            && players[PlayerNum.TWO].shipsRemainingForBuild() === 0
-            && gameState.stage === GameStage.SHIP_PLACEMENT)
-            this.setState({
-                gameState: new GameState(players[PlayerNum.ONE], GameStage.GAMEPLAY)
-            })
+        }
 
     }
 

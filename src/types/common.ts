@@ -13,6 +13,7 @@ export const enum PlayerNum {
 
 export const enum GameStage {
     SHIP_PLACEMENT,
+    MOVE_CONFIRMATION,
     GAMEPLAY,
     ENDGAME
 }

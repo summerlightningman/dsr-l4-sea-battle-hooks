@@ -5,7 +5,7 @@ class GameState {
     stage: GameStage;
     player: Player;
 
-    constructor(player: Player, stage = GameStage.SHIP_PLACEMENT) {
+    constructor(player: Player, stage: GameStage = GameStage.SHIP_PLACEMENT) {
         this.player = player;
         this.stage = stage;
 
@@ -15,7 +15,7 @@ class GameState {
 
     clone() {
         const gameState = new GameState(this.player);
-        gameState.stage = GameStage.SHIP_PLACEMENT;
+        gameState.stage = this.stage;
         return gameState
     }
 
@@ -24,6 +24,8 @@ class GameState {
         switch (this.stage) {
             case GameStage.SHIP_PLACEMENT:
                 return `расстановки кораблей для игрока ${name} (осталось: ${shipsRemainingForBuild()})`
+            case GameStage.MOVE_CONFIRMATION:
+                return `подтверждения хода для игрока ${name}`
             case GameStage.GAMEPLAY:
                 return `сражения между игроками. Очередь игрока ${name}`
         }

@@ -1,7 +1,8 @@
 import {PlayerNum} from "./common";
 
 export interface ConfirmationScreenProps {
-    playerName: PlayerNum
+    playerName: PlayerNum,
+    onClick: () => void
 }
 
 export interface ConfirmationScreenState {

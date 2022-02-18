@@ -20,7 +20,7 @@ class Board extends Component<BoardProps> {
 
         const cellList = generateCells(boardWidth, boardHeight).map(
             ([x, y]) => {
-                if (isEquals(this.props.currState.attackedCell, [x, y]))
+                if (this.props.player.name !== this.props.currState.player.name && isEquals(this.props.currState.attackedCell, [x, y]))
                     return <Cell
                         key={`${x}${y}`}
                         cellState={CellType.ATTACKED}
@@ -58,7 +58,7 @@ class Board extends Component<BoardProps> {
                  }>
                 {cellList}
             </div>
-            {this.props.currState.isReadyForNextStage() && this.props.children}
+            {this.props.children}
         </div>;
     }
 }

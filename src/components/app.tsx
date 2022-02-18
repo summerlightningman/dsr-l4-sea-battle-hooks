@@ -22,6 +22,7 @@ class App extends Component<AppProps, AppState> {
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
         this.attack = this.attack.bind(this);
+        this.confirmAttack = this.confirmAttack.bind(this);
 
     }
 
@@ -47,11 +48,9 @@ class App extends Component<AppProps, AppState> {
             if (this.state.gameState.player.name === playerNum)
                 return
 
-            const player = this.state.players[playerNum];
-
-            this.setState({
-                players: {...this.state.players, [playerNum]: player.attack(x, y)}
-            })
+            this.setState(state => ({
+                gameState: state.gameState.toggleTarget(x, y)
+            }));
         }
     }
 
@@ -73,14 +72,23 @@ class App extends Component<AppProps, AppState> {
                     gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
                 })
 
-            case GameStage.GAMEPLAY:
-                
         }
+    }
+
+    confirmAttack() {
+
     }
 
 
     render() {
-        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameState.player.name}/>
+        const onCellClick = this.state.gameState.stage === GameStage.SHIP_PLACEMENT
+            ? this.placeShip
+            : this.attack;
+
+        const confirmationScreen = <ConfirmationScreen
+            playerName={this.state.gameState.player.name}
+            onClick={this.goToNextState}
+        />
         const gameBoards = <div className="game-boards">
             {Object.values(this.state.players).map(
                 (player) =>
@@ -88,9 +96,10 @@ class App extends Component<AppProps, AppState> {
                         player={player}
                         key={player.name}
                         currState={this.state.gameState}
-                        onCellClick={this.placeShip(player.name)}
+                        onCellClick={onCellClick(player.name)}
                     >
-                        <button onClick={this.goToNextState}>Подтвердить ход</button>
+                        {this.state.gameState.isReadyForNextStage() && <button onClick={this.goToNextState}>Подтвердить ход</button>}
+
                     </Board>
             )
             }

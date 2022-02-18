@@ -20,6 +20,7 @@ class Player {
         this.attack = this.attack.bind(this);
         this.clonePlayer = this.clonePlayer.bind(this);
         this.setCellType = this.setCellType.bind(this);
+
     }
 
     private setCellType(x: number, y: number, type: CellType) {
@@ -56,9 +57,9 @@ class Player {
     attack(x: number, y: number): Player {
         const cellState = this.cells[x][y];
         if (cellState === CellType.EMPTY)
-            return this.setCellType(x, y, CellType.MISSED)
-        if (cellState === CellType.HAS_SHIP)
-            return this.setCellType(x, y, CellType.KILLED)
+            return this.setCellType(x, y, CellType.ATTACKED)
+        if (cellState === CellType.ATTACKED)
+            return this.setCellType(x, y, CellType.EMPTY)
         return this
     }
 }

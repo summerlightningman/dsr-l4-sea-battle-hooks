@@ -6,6 +6,7 @@ export interface CellProps {
 export const enum CellType {
     EMPTY,
     HAS_SHIP,
+    ATTACKED,
     MISSED,
     KILLED
 }

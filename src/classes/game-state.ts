@@ -1,19 +1,43 @@
 import {GameStage, PlayerNum} from "../types/common";
 import Player from "./player";
+import {CellCoords} from "../types/game-state";
+import {isEquals} from "../functions";
+import {emptyTargetCell} from "../config";
 
 class GameState {
     stage: GameStage;
     player: Player;
+    attackedCell: CellCoords;
 
     constructor(player: Player, stage: GameStage = GameStage.SHIP_PLACEMENT) {
         this.player = player;
         this.stage = stage;
+        this.attackedCell = emptyTargetCell;
 
 
         this.toString = this.toString.bind(this);
         this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
+        this.clone = this.clone.bind(this);
+        this.toggleTarget = this.toggleTarget.bind(this);
+        this.isTargetEmpty = this.isTargetEmpty.bind(this);
     }
 
+    private clone(){
+        return new GameState(this.player, this.stage);
+    }
+
+    toggleTarget(x: number, y: number) {
+        const gameState = this.clone();
+        if (isEquals(this.attackedCell, emptyTargetCell))
+            gameState.attackedCell = [x, y];
+        else
+            gameState.attackedCell = emptyTargetCell;
+        return gameState
+    }
+
+    isTargetEmpty() {
+        return isEquals(this.attackedCell, emptyTargetCell)
+    }
 
     isReadyForNextStage() {
         switch (this.stage) {
@@ -22,9 +46,9 @@ class GameState {
                     return true
                 return this.player.name === PlayerNum.TWO && !this.player.shipsRemainingForBuild();
             case GameStage.MOVE_CONFIRMATION:
-                return false
+                return true
             case GameStage.GAMEPLAY:
-                return false
+                return !this.isTargetEmpty()
         }
     }
 

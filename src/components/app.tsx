@@ -12,8 +12,8 @@ import Board from './board';
 import '../styles/app.css';
 import ConfirmationScreen from "./confirmation-screen";
 
-class App extends Component<AppProps, AppState> {
 
+class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
         this.state = new AppInitialState();
@@ -23,7 +23,6 @@ class App extends Component<AppProps, AppState> {
         this.goToNextState = this.goToNextState.bind(this);
         this.attack = this.attack.bind(this);
         this.confirmAttack = this.confirmAttack.bind(this);
-
     }
 
     setInitialState() {
@@ -79,16 +78,18 @@ class App extends Component<AppProps, AppState> {
 
     }
 
-
     render() {
+        const actionButton = <button onClick={this.goToNextState}>{this.state.gameState.getActionButtonName()}</button>;
         const onCellClick = this.state.gameState.stage === GameStage.SHIP_PLACEMENT
             ? this.placeShip
             : this.attack;
 
-        const confirmationScreen = <ConfirmationScreen
-            playerName={this.state.gameState.player.name}
-            onClick={this.goToNextState}
-        />
+        const confirmationScreen = (
+            <ConfirmationScreen playerName={this.state.gameState.player.name}>
+                {actionButton}
+            </ConfirmationScreen>
+        );
+
         const gameBoards = <div className="game-boards">
             {Object.values(this.state.players).map(
                 (player) =>
@@ -98,8 +99,7 @@ class App extends Component<AppProps, AppState> {
                         currState={this.state.gameState}
                         onCellClick={onCellClick(player.name)}
                     >
-                        {this.state.gameState.isReadyForNextStage() && <button onClick={this.goToNextState}>Подтвердить ход</button>}
-
+                        {this.state.gameState.isReadyForNextStage() && actionButton}
                     </Board>
             )
             }

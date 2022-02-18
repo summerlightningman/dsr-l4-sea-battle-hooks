@@ -58,7 +58,7 @@ class Board extends Component<BoardProps> {
                  }>
                 {cellList}
             </div>
-            {this.props.children}
+            {this.props.player.name === this.props.currState.player.name && this.props.children}
         </div>;
     }
 }

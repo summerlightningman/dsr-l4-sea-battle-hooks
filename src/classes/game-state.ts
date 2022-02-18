@@ -20,6 +20,7 @@ class GameState {
         this.clone = this.clone.bind(this);
         this.toggleTarget = this.toggleTarget.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
+        this.getActionButtonName = this.getActionButtonName.bind(this);
     }
 
     private clone(){
@@ -61,6 +62,19 @@ class GameState {
                 return `подтверждения хода для игрока ${name}`
             case GameStage.GAMEPLAY:
                 return `сражения между игроками. Очередь игрока ${name}`
+        }
+    }
+
+    getActionButtonName(): string {
+        switch (this.stage) {
+            case GameStage.SHIP_PLACEMENT:
+                return 'Подтвердить'
+            case GameStage.MOVE_CONFIRMATION:
+                return 'Начать ход'
+            case GameStage.GAMEPLAY:
+                return 'Атаковать'
+            default:
+                return ''
         }
     }
 }

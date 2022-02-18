@@ -90,28 +90,37 @@ class App extends Component<AppProps, AppState> {
             </ConfirmationScreen>
         );
 
-        const gameBoards = <div className="game-boards">
-            {Object.values(this.state.players).map(
-                (player) =>
-                    <Board
-                        player={player}
-                        key={player.name}
-                        currState={this.state.gameState}
-                        onCellClick={onCellClick(player.name)}
-                    >
-                        {this.state.gameState.isReadyForNextStage() && actionButton}
-                    </Board>
-            )
-            }
-        </div>;
+        const gameBoards = (
+            <div className="game-boards">
+                {
+                    Object.values(this.state.players).map(
+                        (player) =>
+                            <Board
+                                player={player}
+                                key={player.name}
+                                currState={this.state.gameState}
+                                onCellClick={onCellClick(player.name)}
+                            >
+                                {this.state.gameState.isReadyForNextStage() && actionButton}
+                            </Board>
+                    )
+                }
+            </div>
+        );
 
-        return <main>
-            <GameInfo
-                currState={this.state.gameState}
-                resetAll={this.setInitialState}
-            />
-            {this.state.gameState.stage === GameStage.MOVE_CONFIRMATION ? confirmationScreen : gameBoards}
-        </main>
+        return (
+            <main>
+                <GameInfo
+                    currState={this.state.gameState}
+                    resetAll={this.setInitialState}
+                />
+                {
+                    this.state.gameState.stage === GameStage.MOVE_CONFIRMATION
+                        ? confirmationScreen
+                        : gameBoards
+                }
+            </main>
+        )
     }
 }
 

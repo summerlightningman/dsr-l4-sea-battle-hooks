@@ -11,6 +11,7 @@ import Board from './board';
 
 import '../styles/app.css';
 import ConfirmationScreen from "./confirmation-screen";
+import ActionButton from "./action-button";
 
 
 class App extends Component<AppProps, AppState> {
@@ -79,7 +80,12 @@ class App extends Component<AppProps, AppState> {
     }
 
     render() {
-        const actionButton = <button onClick={this.goToNextState}>{this.state.gameState.getActionButtonName()}</button>;
+        const actionButton = <ActionButton
+            onNextStage={this.goToNextState}
+            onConfirmAttack={this.confirmAttack}
+            gameStage={this.state.gameState.stage}
+            isReadyForNextStage={this.state.gameState.isReadyForNextStage()}
+        />;
         const onCellClick = this.state.gameState.stage === GameStage.SHIP_PLACEMENT
             ? this.placeShip
             : this.attack;
@@ -100,9 +106,7 @@ class App extends Component<AppProps, AppState> {
                                 key={player.name}
                                 currState={this.state.gameState}
                                 onCellClick={onCellClick(player.name)}
-                            >
-                                {this.state.gameState.isReadyForNextStage() && actionButton}
-                            </Board>
+                            />
                     )
                 }
             </div>
@@ -113,7 +117,10 @@ class App extends Component<AppProps, AppState> {
                 <GameInfo
                     currState={this.state.gameState}
                     resetAll={this.setInitialState}
-                />
+                >
+                    {actionButton}
+                </GameInfo>
+
                 {
                     this.state.gameState.stage === GameStage.MOVE_CONFIRMATION
                         ? confirmationScreen

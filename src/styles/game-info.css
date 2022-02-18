@@ -1,5 +1,5 @@
 .game-state {
-    height: 120px;
+    height: 160px;
 }
 
 .game-state__header {
@@ -13,6 +13,10 @@
     align-items: flex-end;
     height: auto;
     padding: 20px 10%;
+}
+
+.control-panel_horizontal {
+    flex-direction: row;
 }
 
 .control-panel > * {

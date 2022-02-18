@@ -40,7 +40,7 @@ class GameState {
         return isEquals(this.attackedCell, emptyTargetCell)
     }
 
-    isReadyForNextStage() {
+    isReadyForNextStage(): boolean {
         switch (this.stage) {
             case GameStage.SHIP_PLACEMENT:
                 if (this.player.name === PlayerNum.ONE && !this.player.shipsRemainingForBuild())
@@ -50,6 +50,8 @@ class GameState {
                 return true
             case GameStage.GAMEPLAY:
                 return !this.isTargetEmpty()
+            default:
+                return false
         }
     }
 

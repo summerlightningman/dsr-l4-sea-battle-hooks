@@ -7,13 +7,10 @@ import ConfirmationScreen from "./confirmation-screen";
 import ActionButton from "./action-button";
 
 import {AppProps, AppState} from '../types/app';
-import {PlayerNum} from '../types/common';
-import {CellType} from "../types/cell";
+import {PlayerNum} from '../types/player';
 import {GameStage} from "../types/game-controller";
 
 import AppInitialState from '../classes/app-initial-state';
-import GameController from '../classes/game-controller';
-import Player from "../classes/player";
 
 import '../styles/app.css';
 
@@ -27,6 +24,7 @@ class App extends Component<AppProps, AppState> {
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
         this.setTargetCell = this.setTargetCell.bind(this);
+
     }
 
     setInitialState() {
@@ -58,56 +56,9 @@ class App extends Component<AppProps, AppState> {
     }
 
     goToNextState() {
-        const {players, gameController} = this.state;
-        const enemy: Player = players[gameController.getEnemyPlayerName()];
-
-        switch (gameController.stage) {
-            case GameStage.SHIP_PLACEMENT:
-                if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
-                    return this.setState({
-                        gameController: new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
-                    });
-
-                return this.setState({
-                    gameController: new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
-                });
-
-            case GameStage.MOVE_CONFIRMATION:
-                return this.setState({
-                    gameController: new GameController(gameController.player, GameStage.GAMEPLAY)
-                })
-
-            case GameStage.GAMEPLAY:
-                const [x, y] = gameController.attackedCell;
-                const enemyName = gameController.getEnemyPlayerName();
-                const updatedEnemy = enemy.attack(x, y);
-
-                if (updatedEnemy.cells[x][y] === CellType.KILLED) {
-                    alert('Убил');
-                    if (updatedEnemy.isLost()) {
-                        this.setState({
-                            gameController: new GameController(gameController.player, GameStage.ENDGAME),
-                            players: {...this.state.players, [enemyName]: updatedEnemy}
-                        });
-                        return alert(`Победил игрок ${gameController.player.name}. Поздравляем! 🥳🎉`)
-                    }
-
-                    return this.setState({
-                        gameController: new GameController(gameController.player, GameStage.GAMEPLAY),
-                        players: {...this.state.players, [enemyName]: updatedEnemy}
-                    })
-                }
-
-                alert('Промах');
-                return this.setState({
-                    gameController: new GameController(gameController.player, GameStage.MOVE_FINISHED)
-                })
-
-            case GameStage.MOVE_FINISHED:
-                return this.setState({
-                    gameController: new GameController(enemy, GameStage.MOVE_CONFIRMATION)
-                })
-        }
+        const updatedState = this.state.gameController.getStateForNextStage(this.state.players);
+        // @ts-ignore
+        this.setState(updatedState);
     }
 
 

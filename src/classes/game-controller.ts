@@ -1,8 +1,10 @@
-import {PlayerNum} from "../types/common";
+import {PlayerList, PlayerNum} from "../types/player";
 import Player from "./player";
 import {CellCoords, GameStage} from "../types/game-controller";
 import {isEquals} from "../functions";
 import {emptyTargetCell} from "../config";
+import {CellType} from "../types/cell";
+import {AppState} from "../types/app";
 
 class GameController {
     stage: GameStage;
@@ -22,9 +24,10 @@ class GameController {
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getActionButtonName = this.getActionButtonName.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
+        this.getStateForNextStage = this.getStateForNextStage.bind(this);
     }
 
-    private clone(){
+    private clone() {
         return new GameController(this.player, this.stage);
     }
 
@@ -55,6 +58,60 @@ class GameController {
                 return true
             default:
                 return false
+        }
+    }
+
+    getStateForNextStage(players: PlayerList): Partial<AppState> {
+        const enemy: Player = players[this.getEnemyPlayerName()];
+
+        switch (this.stage) {
+            case GameStage.SHIP_PLACEMENT:
+                if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
+                    return {
+                        gameController: new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
+                    }
+
+                return {
+                    gameController: new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                }
+
+            case GameStage.MOVE_CONFIRMATION:
+                return {
+                    gameController: new GameController(this.player, GameStage.GAMEPLAY)
+                }
+
+            case GameStage.GAMEPLAY:
+                const [x, y] = this.attackedCell;
+                const enemyName = this.getEnemyPlayerName();
+                const updatedEnemy = enemy.attack(x, y);
+
+                if (updatedEnemy.cells[x][y] === CellType.KILLED) {
+                    alert('Убил');
+                    if (updatedEnemy.isLost()) {
+                        alert(`Победил игрок ${this.player.name}. Поздравляем! 🥳🎉`)
+                        return {
+                            gameController: new GameController(this.player, GameStage.ENDGAME),
+                            players: {...players, [enemyName]: updatedEnemy}
+                        }
+                    }
+
+                    return {
+                        gameController: new GameController(this.player, GameStage.GAMEPLAY),
+                        players: {...players, [enemyName]: updatedEnemy}
+                    }
+                }
+
+                alert('Промах');
+                return {
+                    gameController: new GameController(this.player, GameStage.MOVE_FINISHED)
+                }
+
+            case GameStage.MOVE_FINISHED:
+                return {
+                    gameController: new GameController(enemy, GameStage.MOVE_CONFIRMATION)
+                }
+            default:
+                return {}
         }
     }
 

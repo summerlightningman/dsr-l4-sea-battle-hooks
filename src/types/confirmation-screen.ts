@@ -1,4 +1,4 @@
-import {PlayerNum} from "./common";
+import {PlayerNum} from "./player";
 
 export interface ConfirmationScreenProps {
     playerName: PlayerNum,

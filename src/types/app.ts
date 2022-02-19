@@ -1,10 +1,9 @@
-import {PlayerNum} from "./common";
-import Player from "../classes/player";
 import GameController from "../classes/game-controller";
+import {PlayerList} from "./player";
 
 export type AppProps = object;
 
 export interface AppState {
     gameController: GameController,
-    players: Record<PlayerNum, Player>
+    players: PlayerList
 }

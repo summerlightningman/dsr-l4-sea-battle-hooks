@@ -1,11 +1,12 @@
-import {PlayerNum} from "../types/common";
 import Player from "./player";
-import {AppState} from "../types/app";
 import GameController from "./game-controller";
+
+import {PlayerList, PlayerNum} from "../types/player";
+import {AppState} from "../types/app";
 
 class AppInitialState implements AppState {
     gameController: GameController;
-    players: Record<PlayerNum, Player>;
+    players: PlayerList;
 
     constructor() {
         this.players = {

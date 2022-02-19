@@ -2,7 +2,7 @@ import {Component} from "react";
 
 import {ConfirmationScreenProps, ConfirmationScreenState} from "../types/confirmation-screen";
 
-import {PlayerNum} from "../types/common";
+import {PlayerNum} from "../types/player";
 
 import '../styles/confirmation-screen.css';
 

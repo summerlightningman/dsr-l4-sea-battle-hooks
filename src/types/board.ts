@@ -7,3 +7,6 @@ export interface BoardProps {
     onCellClick: (x: number, y: number) => void
 }
 
+export type BoardWidth = number;
+export type BoardHeight = number;
+

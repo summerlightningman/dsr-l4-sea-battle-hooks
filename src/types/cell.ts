@@ -10,3 +10,5 @@ export const enum CellType {
     MISSED,
     KILLED
 }
+
+export type CellSize = string;

@@ -1,10 +1,12 @@
-import {PlayerList, PlayerNum} from "../types/player";
 import Player from "./player";
 import {CellCoords, GameStage} from "../types/game-controller";
-import {isEquals} from "../functions";
-import {emptyTargetCell} from "../config";
+import {PlayerList, PlayerNum} from "../types/player";
 import {CellType} from "../types/cell";
 import {AppState} from "../types/app";
+
+import {emptyTargetCell} from "../config";
+
+import {isEquals} from "../functions";
 
 class GameController {
     stage: GameStage;
@@ -63,12 +65,16 @@ class GameController {
         }
     }
 
+    allShipsWasPlaced(players: PlayerList) {
+        return !players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild()
+    }
+
     getStateForNextStage(players: PlayerList): Partial<AppState> {
         const enemy: Player = players[this.getEnemyPlayerName()];
 
         switch (this.stage) {
             case GameStage.SHIP_PLACEMENT:
-                if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
+                if (this.allShipsWasPlaced(players))
                     return {
                         gameController: new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
                     }

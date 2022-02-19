@@ -8,7 +8,7 @@ import {CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
 
-import {generateCells, isEquals} from "../functions";
+import {generateCoordinatePairs, isEquals} from "../functions";
 
 import '../styles/board.css';
 
@@ -21,12 +21,12 @@ class Board extends Component<BoardProps> {
         if (isHidden)
             return <></>
 
-        const cellList = generateCells(boardWidth, boardHeight).map(
+        const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
             ([x, y]) => {
                 if (this.props.player.name !== this.props.currState.player.name && isEquals(this.props.currState.attackedCell, [x, y]))
                     return <Cell
                         key={`${x}${y}`}
-                        cellState={CellType.ATTACKED}
+                        cellType={CellType.ATTACKED}
                         // @ts-ignore
                         onCellClick={this.props.onCellClick(x, y)}
                     />
@@ -35,14 +35,14 @@ class Board extends Component<BoardProps> {
                     const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
                     return <Cell
                         key={`${x}${y}`}
-                        cellState={cellState}
+                        cellType={cellState}
                         // @ts-ignore
                         onCellClick={this.props.onCellClick(x, y)}
                     />
                 } else {
                     return <Cell
                         key={`${x}${y}`}
-                        cellState={this.props.player.cells[x][y]}
+                        cellType={this.props.player.cells[x][y]}
                         // @ts-ignore
                         onCellClick={this.props.onCellClick(x, y)}
                     />

@@ -1,5 +1,5 @@
 export interface CellProps {
-    cellState: CellType,
+    cellType: CellType,
     onCellClick: () => void
 }
 

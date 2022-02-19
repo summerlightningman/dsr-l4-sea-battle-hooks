@@ -1,20 +1,19 @@
 import {Component} from "react";
 
-import {ConfirmationScreenProps, ConfirmationScreenState} from "../types/confirmation-screen";
+import {ConfirmationScreenProps} from "../types/confirmation-screen";
 
 import {PlayerNum} from "../types/player";
 
 import '../styles/confirmation-screen.css';
 
 
-class ConfirmationScreen extends Component<ConfirmationScreenProps, ConfirmationScreenState> {
+class ConfirmationScreen extends Component<ConfirmationScreenProps> {
     playerName: PlayerNum;
 
     constructor(props: ConfirmationScreenProps) {
         super(props);
 
         this.playerName = props.playerName;
-
     }
 
     render() {

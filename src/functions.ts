@@ -1,7 +1,7 @@
 import {CellType} from "./types/cell";
 import {Arena} from "./types/common";
 
-export const generateCells = (left: number, right: number): number[][] => {
+export const generateCoordinatePairs = (left: number, right: number): number[][] => {
     const arr = [];
     for (let i = 0; i < left; i++)
         for (let j = 0; j < right; j++)

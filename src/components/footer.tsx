@@ -24,9 +24,7 @@ class Footer extends Component<FooterProps> {
     }
 
     render() {
-        const doNothing = () => {
-        };
-
+        const doNothing = () => {};
 
         return <footer className="footer">
             <h3>Легенда</h3>
@@ -34,7 +32,7 @@ class Footer extends Component<FooterProps> {
                 {
                     this.cellDescriptions.map(([type, description], idx) =>
                         <div className="cell-container__item" key={idx}>
-                            <Cell cellState={type} onCellClick={doNothing}/>
+                            <Cell cellType={type} onCellClick={doNothing}/>
                             <span>&mdash;</span>
                             <span className="cell-container__description">{description}</span>
                         </div>

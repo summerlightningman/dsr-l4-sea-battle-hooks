@@ -21,18 +21,16 @@ class ActionButton extends Component<ActionButtonProps> {
             case GameStage.GAMEPLAY:
                 return 'Атаковать'
             default:
-                return ''
+                return 'Подтвердить'
         }
     }
 
 
     render() {
         const {isReadyForNextStage} = this.props;
-        if (!isReadyForNextStage)
-            return <></>
-
         const name = this.getBtnNameByGameState();
-        return <button onClick={this.props.onNextStage}>{name}</button>
+
+        return <button onClick={this.props.onNextStage} disabled={!isReadyForNextStage}>{name}</button>
     }
 }
 

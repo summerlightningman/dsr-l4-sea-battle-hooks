@@ -20,13 +20,13 @@ class GameInfo extends Component<GameInfoProps> {
     render() {
         const isConfirmation = this.props.currState.stage === GameStage.MOVE_CONFIRMATION;
 
-        return <div className="game-state">
+        return <header className="game-state">
             <h1 className="game-state__header">{gameTitle}</h1>
             <div className="control-panel">
                 {!isConfirmation && this.props.children}
                 <button className="control-panel__btn" onClick={this.props.resetAll}>Начать сначала</button>
             </div>
-        </div>
+        </header>
     }
 }
 

@@ -33,20 +33,15 @@ class App extends Component<AppProps, AppState> {
 
     placeShip(playerNum: PlayerNum) {
         return (x: number, y: number) => () => {
-            if (this.state.gameController.player.name !== playerNum)
-                return
-
-            const player = this.state.players[playerNum];
-
-            this.setState({
-                players: {...this.state.players, [playerNum]: player.placeShip(x, y)}
-            });
+            const updatedState = this.state.gameController.getStateForShipPlacement(this.state.players, playerNum, x, y)
+            // @ts-ignore
+            this.setState(updatedState)
         };
     }
 
     setTargetCell(playerNum: PlayerNum) {
         return (x: number, y: number) => () => {
-            const updatedState = this.state.gameController.placeShip(playerNum, x, y)
+            const updatedState = this.state.gameController.getStateForCellMark(this.state.players, playerNum, x, y)
             // @ts-ignore
             this.setState(updatedState)
         }
@@ -92,9 +87,7 @@ class App extends Component<AppProps, AppState> {
                 <Header
                     currState={this.state.gameController}
                     resetAll={this.setInitialState}
-                >
-
-                </Header>
+                />
                 <main className="main">
                     {
                         this.state.gameController.stage === GameStage.MOVE_CONFIRMATION

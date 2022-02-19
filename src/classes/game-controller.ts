@@ -20,24 +20,26 @@ class GameController {
         this.toString = this.toString.bind(this);
         this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
         this.clone = this.clone.bind(this);
-        this.setTargetCell = this.setTargetCell.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
-        this.getActionButtonName = this.getActionButtonName.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
         this.getStateForNextStage = this.getStateForNextStage.bind(this);
+        this.getStateForShipPlacement = this.getStateForShipPlacement.bind(this)
+        this.getStateForCellMark = this.getStateForCellMark.bind(this);
     }
 
     private clone() {
         return new GameController(this.player, this.stage);
     }
 
-    setTargetCell(x: number, y: number) {
-        const gameState = this.clone();
+    getStateForCellMark(players: PlayerList, playerNum: PlayerNum, x: number, y: number) {
+        const updatedGameController = this.clone();
         if (isEquals(this.attackedCell, emptyTargetCell))
-            gameState.attackedCell = [x, y];
+            updatedGameController.attackedCell = [x, y];
         else
-            gameState.attackedCell = emptyTargetCell;
-        return gameState
+            updatedGameController.attackedCell = emptyTargetCell;
+        return {
+            gameController: updatedGameController
+        }
     }
 
     isTargetEmpty() {
@@ -115,12 +117,14 @@ class GameController {
         }
     }
 
-    placeShip(playerNum: PlayerNum, x: number, y: number): Partial<AppState> {
-        if (this.player.name === playerNum)
+    getStateForShipPlacement(players: PlayerList, playerNum: PlayerNum, x: number, y: number): Partial<AppState> {
+        if (this.player.name !== playerNum)
             return {}
 
+        const player = players[playerNum];
+
         return {
-            gameController: this.setTargetCell(x, y)
+            players: {...players, [playerNum]: player.placeShip(x, y)}
         }
     }
 
@@ -128,30 +132,6 @@ class GameController {
         return this.player.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
     }
 
-    toString() {
-        const {name, shipsRemainingForBuild} = this.player;
-        switch (this.stage) {
-            case GameStage.SHIP_PLACEMENT:
-                return `расстановки кораблей для игрока ${name} (осталось: ${shipsRemainingForBuild()})`
-            case GameStage.MOVE_CONFIRMATION:
-                return `подтверждения хода для игрока ${name}`
-            case GameStage.GAMEPLAY:
-                return `сражения между игроками. Очередь игрока ${name}`
-        }
-    }
-
-    getActionButtonName(): string {
-        switch (this.stage) {
-            case GameStage.SHIP_PLACEMENT:
-                return 'Подтвердить'
-            case GameStage.MOVE_CONFIRMATION:
-                return 'Начать ход'
-            case GameStage.GAMEPLAY:
-                return 'Атаковать'
-            default:
-                return ''
-        }
-    }
 
     getPlayerState(): string {
         switch (this.stage) {

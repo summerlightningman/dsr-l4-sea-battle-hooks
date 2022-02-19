@@ -97,7 +97,7 @@ class App extends Component<AppProps, AppState> {
 
             case GameStage.MOVE_FINISHED:
                 return this.setState({
-                    gameController: new GameController(enemy, GameStage.GAMEPLAY)
+                    gameController: new GameController(enemy, GameStage.MOVE_CONFIRMATION)
                 })
         }
     }

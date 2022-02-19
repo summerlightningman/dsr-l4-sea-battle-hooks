@@ -5,3 +5,8 @@
     justify-content: center;
     align-items: center;
 }
+
+.confirmation-screen__text {
+    font-family: 'Press Start 2P', cursive;
+    color: darkgreen;
+}

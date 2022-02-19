@@ -1,4 +1,4 @@
-import {GameStage} from "./common";
+import {GameStage} from "./game-controller";
 
 export interface ActionButtonProps {
     onNextStage: () => void;

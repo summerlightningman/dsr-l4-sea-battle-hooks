@@ -11,10 +11,5 @@ export const enum PlayerNum {
     TWO = '2'
 }
 
-export const enum GameStage {
-    SHIP_PLACEMENT,
-    MOVE_CONFIRMATION,
-    GAMEPLAY,
-    ENDGAME
-}
+
 

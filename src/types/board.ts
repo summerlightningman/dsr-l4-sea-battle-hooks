@@ -1,9 +1,9 @@
 import Player from "../classes/player";
-import GameState from "../classes/game-state";
+import GameController from "../classes/game-controller";
 
 export interface BoardProps {
     player: Player,
-    currState: GameState
+    currState: GameController
     onCellClick: (x: number, y: number) => void
 }
 

@@ -1,6 +1,6 @@
-import GameState from "../classes/game-state";
+import GameController from "../classes/game-controller";
 
 export interface GameInfoProps {
-    currState: GameState,
+    currState: GameController,
     resetAll: () => void,
 }

@@ -1,10 +1,10 @@
-import {GameStage, PlayerNum} from "../types/common";
+import {PlayerNum} from "../types/common";
 import Player from "./player";
-import {CellCoords} from "../types/game-state";
+import {CellCoords, GameStage} from "../types/game-controller";
 import {isEquals} from "../functions";
 import {emptyTargetCell} from "../config";
 
-class GameState {
+class GameController {
     stage: GameStage;
     player: Player;
     attackedCell: CellCoords;
@@ -18,17 +18,17 @@ class GameState {
         this.toString = this.toString.bind(this);
         this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
         this.clone = this.clone.bind(this);
-        this.toggleTarget = this.toggleTarget.bind(this);
+        this.setTargetCell = this.setTargetCell.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getActionButtonName = this.getActionButtonName.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
     }
 
     private clone(){
-        return new GameState(this.player, this.stage);
+        return new GameController(this.player, this.stage);
     }
 
-    toggleTarget(x: number, y: number) {
+    setTargetCell(x: number, y: number) {
         const gameState = this.clone();
         if (isEquals(this.attackedCell, emptyTargetCell))
             gameState.attackedCell = [x, y];
@@ -51,6 +51,8 @@ class GameState {
                 return true
             case GameStage.GAMEPLAY:
                 return !this.isTargetEmpty()
+            case GameStage.MOVE_FINISHED:
+                return true
             default:
                 return false
         }
@@ -86,4 +88,4 @@ class GameState {
     }
 }
 
-export default GameState
+export default GameController

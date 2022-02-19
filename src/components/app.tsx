@@ -2,17 +2,21 @@ import React, {Component} from 'react'
 
 import {AppProps, AppState} from '../types/app';
 
-import {GameStage, PlayerNum} from '../types/common';
+import {PlayerNum} from '../types/common';
 import {AppInitialState} from '../classes/app-initial-state';
-import GameState from '../classes/game-state';
+import GameController from '../classes/game-controller';
 
 import GameInfo from './game-info';
 import Board from './board';
 
-import '../styles/app.css';
+
 import ConfirmationScreen from "./confirmation-screen";
 import ActionButton from "./action-button";
 import {CellType} from "../types/cell";
+import {GameStage} from "../types/game-controller";
+import Player from "../classes/player";
+
+import '../styles/app.css';
 
 
 class App extends Component<AppProps, AppState> {
@@ -23,7 +27,7 @@ class App extends Component<AppProps, AppState> {
         this.setInitialState = this.setInitialState.bind(this);
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
-        this.attack = this.attack.bind(this);
+        this.setTargetCell = this.setTargetCell.bind(this);
         this.confirmAttack = this.confirmAttack.bind(this);
     }
 
@@ -33,7 +37,7 @@ class App extends Component<AppProps, AppState> {
 
     placeShip(playerNum: PlayerNum) {
         return (x: number, y: number) => () => {
-            if (this.state.gameState.player.name !== playerNum)
+            if (this.state.gameController.player.name !== playerNum)
                 return
 
             const player = this.state.players[playerNum];
@@ -44,53 +48,63 @@ class App extends Component<AppProps, AppState> {
         };
     }
 
-    attack(playerNum: PlayerNum) {
+    setTargetCell(playerNum: PlayerNum) {
         return (x: number, y: number) => () => {
-            if (this.state.gameState.player.name === playerNum)
+            if (this.state.gameController.player.name === playerNum)
                 return
 
             this.setState(state => ({
-                gameState: state.gameState.toggleTarget(x, y)
+                gameController: state.gameController.setTargetCell(x, y)
             }));
         }
     }
 
     goToNextState() {
-        const {players, gameState} = this.state;
-        switch (gameState.stage) {
+        const {players, gameController} = this.state;
+        const enemy: Player = players[gameController.getEnemyPlayerName()];
+
+        switch (gameController.stage) {
             case GameStage.SHIP_PLACEMENT:
                 if (!players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild())
                     return this.setState({
-                        gameState: new GameState(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
+                        gameController: new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
                     });
 
                 return this.setState({
-                    gameState: new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                    gameController: new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
                 });
 
             case GameStage.MOVE_CONFIRMATION:
                 return this.setState({
-                    gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
+                    gameController: new GameController(gameController.player, GameStage.GAMEPLAY)
                 })
 
             case GameStage.GAMEPLAY:
-                const enemy = players[gameState.getEnemyPlayerName()];
-                const [x, y] = gameState.attackedCell;
-                if (enemy.cells[x][y] === CellType.KILLED)
-                    return this.setState({
-                        gameState: new GameState(gameState.player, GameStage.GAMEPLAY)
-                    })
 
+                const [x, y] = gameController.attackedCell;
+                if (enemy.cells[x][y] === CellType.KILLED) {
+                    alert('Убил');
+                    return this.setState({
+                        gameController: new GameController(gameController.player, GameStage.GAMEPLAY)
+                    })
+                }
+
+                alert('Промах');
                 return this.setState({
-                    gameState: new GameState(enemy, GameStage.MOVE_CONFIRMATION)
+                    gameController: new GameController(gameController.player, GameStage.MOVE_FINISHED)
+                })
+
+            case GameStage.MOVE_FINISHED:
+                return this.setState({
+                    gameController: new GameController(enemy, GameStage.GAMEPLAY)
                 })
         }
     }
 
     confirmAttack() {
-        const {gameState, players} = this.state;
-        const [x, y] = gameState.attackedCell;
-        const enemyName = gameState.getEnemyPlayerName()
+        const {gameController, players} = this.state;
+        const [x, y] = gameController.attackedCell;
+        const enemyName = gameController.getEnemyPlayerName();
         const updatedPlayer = players[enemyName].attack(x, y);
 
         this.setState(state => ({
@@ -103,15 +117,15 @@ class App extends Component<AppProps, AppState> {
         const actionButton = <ActionButton
             onNextStage={this.goToNextState}
             onConfirmAttack={this.confirmAttack}
-            gameStage={this.state.gameState.stage}
-            isReadyForNextStage={this.state.gameState.isReadyForNextStage()}
+            gameStage={this.state.gameController.stage}
+            isReadyForNextStage={this.state.gameController.isReadyForNextStage()}
         />;
-        const onCellClick = this.state.gameState.stage === GameStage.SHIP_PLACEMENT
+        const onCellClick = this.state.gameController.stage === GameStage.SHIP_PLACEMENT
             ? this.placeShip
-            : this.attack;
+            : this.setTargetCell;
 
         const confirmationScreen = (
-            <ConfirmationScreen playerName={this.state.gameState.player.name}>
+            <ConfirmationScreen playerName={this.state.gameController.player.name}>
                 {actionButton}
             </ConfirmationScreen>
         );
@@ -124,7 +138,7 @@ class App extends Component<AppProps, AppState> {
                             <Board
                                 player={player}
                                 key={player.name}
-                                currState={this.state.gameState}
+                                currState={this.state.gameController}
                                 onCellClick={onCellClick(player.name)}
                             />
                     )
@@ -135,14 +149,14 @@ class App extends Component<AppProps, AppState> {
         return (
             <main>
                 <GameInfo
-                    currState={this.state.gameState}
+                    currState={this.state.gameController}
                     resetAll={this.setInitialState}
                 >
                     {actionButton}
                 </GameInfo>
 
                 {
-                    this.state.gameState.stage === GameStage.MOVE_CONFIRMATION
+                    this.state.gameController.stage === GameStage.MOVE_CONFIRMATION
                         ? confirmationScreen
                         : gameBoards
                 }

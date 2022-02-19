@@ -2,10 +2,10 @@ import {Component} from 'react';
 
 import {gameTitle} from "../config";
 import {GameInfoProps} from "../types/game-info";
-import gameState from "../classes/game-state";
+import gameState from "../classes/game-controller";
 
 import '../styles/game-info.css';
-import {GameStage} from "../types/common";
+import {GameStage} from "../types/game-controller";
 
 class GameInfo extends Component<GameInfoProps> {
     currState: gameState;

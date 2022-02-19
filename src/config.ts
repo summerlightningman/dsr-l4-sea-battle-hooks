@@ -1,5 +1,5 @@
 import {BoardHeight, BoardWidth, CellSize, ShipCount} from "./types/common";
-import {CellCoords} from "./types/game-state";
+import {CellCoords} from "./types/game-controller";
 
 export const gameTitle = 'Игра "Морской бой"';
 export const boardWidth: BoardWidth = 5;

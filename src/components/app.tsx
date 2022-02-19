@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 
-import GameInfo from './game-info';
+import Header from './header';
 import Board from './board';
 import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
@@ -136,21 +136,25 @@ class App extends Component<AppProps, AppState> {
         );
 
         return (
-            <main>
-                <GameInfo
+            <div className="content">
+                <Header
                     currState={this.state.gameController}
                     resetAll={this.setInitialState}
                 >
-                    {actionButton}
-                </GameInfo>
 
-                {
-                    this.state.gameController.stage === GameStage.MOVE_CONFIRMATION
-                        ? confirmationScreen
-                        : gameBoards
-                }
+                </Header>
+                <main className="main">
+                    {
+                        this.state.gameController.stage === GameStage.MOVE_CONFIRMATION
+                            ? confirmationScreen
+                            : gameBoards
+                    }
+                </main>
+                <div className="controls">
+                    {actionButton}
+                </div>
                 <Footer/>
-            </main>
+            </div>
         )
     }
 }

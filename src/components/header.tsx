@@ -1,14 +1,14 @@
 import {Component} from 'react';
 
-import {GameInfoProps} from "../types/game-info";
+import {GameInfoProps} from "../types/header";
 import {GameStage} from "../types/game-controller";
 import gameState from "../classes/game-controller";
 
 import {gameTitle} from "../config";
 
-import '../styles/game-info.css';
+import '../styles/header.css';
 
-class GameInfo extends Component<GameInfoProps> {
+class Header extends Component<GameInfoProps> {
     currState: gameState;
 
     constructor(props: GameInfoProps) {
@@ -30,4 +30,4 @@ class GameInfo extends Component<GameInfoProps> {
     }
 }
 
-export default GameInfo
+export default Header

@@ -1,3 +1,20 @@
+.content {
+    height: 100vh;
+}
+
+.main {
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .game-boards {
     display: flex;
     flex-direction: row;

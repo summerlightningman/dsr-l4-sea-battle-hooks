@@ -15,7 +15,7 @@ body {
     outline: none;
     cursor: pointer;
     font-family: 'Press Start 2P', cursive;
-    padding: 10px 5px;
+    padding: 10px 10px;
     box-shadow: 2px 3px black;
     border: 1px solid black;
 }

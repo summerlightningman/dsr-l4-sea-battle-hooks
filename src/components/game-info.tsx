@@ -1,11 +1,12 @@
 import {Component} from 'react';
 
-import {gameTitle} from "../config";
 import {GameInfoProps} from "../types/game-info";
+import {GameStage} from "../types/game-controller";
 import gameState from "../classes/game-controller";
 
+import {gameTitle} from "../config";
+
 import '../styles/game-info.css';
-import {GameStage} from "../types/game-controller";
 
 class GameInfo extends Component<GameInfoProps> {
     currState: gameState;
@@ -25,7 +26,6 @@ class GameInfo extends Component<GameInfoProps> {
                 {!isConfirmation && this.props.children}
                 <button className="control-panel__btn" onClick={this.props.resetAll}>Начать сначала</button>
             </div>
-
         </div>
     }
 }

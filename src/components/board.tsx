@@ -1,11 +1,14 @@
 import {Component} from 'react';
 
-import {BoardProps} from '../types/board';
-import {generateCells, isEquals} from "../functions";
-import {boardHeight, boardWidth, cellSize} from "../config";
-import {GameStage} from "../types/game-controller";
 import Cell from "./cell";
+
+import {BoardProps} from '../types/board';
+import {GameStage} from "../types/game-controller";
 import {CellType} from "../types/cell";
+
+import {boardHeight, boardWidth, cellSize} from "../config";
+
+import {generateCells, isEquals} from "../functions";
 
 import '../styles/board.css';
 

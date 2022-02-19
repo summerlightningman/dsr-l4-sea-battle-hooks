@@ -1,4 +1,5 @@
 import {Component} from "react";
+
 import {ConfirmationScreenProps, ConfirmationScreenState} from "../types/confirmation-screen";
 
 import {PlayerNum} from "../types/common";

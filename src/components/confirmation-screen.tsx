@@ -19,8 +19,7 @@ class ConfirmationScreen extends Component<ConfirmationScreenProps, Confirmation
 
     render() {
         return <div className="confirmation-screen">
-            <h1>{this.playerName}</h1>
-            {this.props.children}
+            <h1>Игрок {this.playerName}, подтвердите передачу хода</h1>
         </div>
     }
 }

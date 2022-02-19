@@ -113,11 +113,7 @@ class App extends Component<AppProps, AppState> {
             ? this.placeShip
             : this.setTargetCell;
 
-        const confirmationScreen = (
-            <ConfirmationScreen playerName={this.state.gameController.player.name}>
-                {actionButton}
-            </ConfirmationScreen>
-        );
+        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameController.player.name}/>;
 
         const gameBoards = (
             <div className="game-boards">

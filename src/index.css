@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Reggae+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P');
+
 * {
     margin: 0;
     padding: 0;
@@ -6,4 +9,23 @@
 
 body {
     height: 100vh;
+}
+
+.btn {
+    outline: none;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    padding: 10px 5px;
+    box-shadow: 2px 3px black;
+    border: 1px solid black;
+}
+
+.btn:active {
+    box-shadow: none;
+    transform: translate3d(2px, 3px, 0px);
+}
+
+.btn:disabled:active {
+    transform: translate3d(0px, 0px, 0px);
+    box-shadow: 2px 3px black;
 }

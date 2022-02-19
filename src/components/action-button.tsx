@@ -30,7 +30,13 @@ class ActionButton extends Component<ActionButtonProps> {
         const {isReadyForNextStage} = this.props;
         const name = this.getBtnNameByGameState();
 
-        return <button onClick={this.props.onNextStage} disabled={!isReadyForNextStage}>{name}</button>
+        return <button
+            className="btn"
+            onClick={this.props.onNextStage}
+            disabled={!isReadyForNextStage}
+        >
+            {name}
+        </button>
     }
 }
 

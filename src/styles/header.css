@@ -1,33 +1,13 @@
-.game-state {
+.header {
     height: 160px;
-}
-
-.game-state__header {
-    text-align: center;
-    font-family: "Roboto Thin", sans-serif;
-}
-
-.control-panel {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    height: auto;
-    padding: 20px 10%;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
-.control-panel_horizontal {
-    flex-direction: row;
-}
-
-.control-panel > * {
-    width: 33%;
-}
-
-.control-panel__btn {
-    padding: 5px;
-    border: none;
-}
-
-.control-panel__text {
+.header__text {
     text-align: center;
+    font-family: 'Reggae One', cursive;
 }
+

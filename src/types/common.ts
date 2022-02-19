@@ -7,8 +7,8 @@ export type ShipCount = number;
 export type Arena = CellType[][];
 
 export const enum PlayerNum {
-    ONE = '1',
-    TWO = '2'
+    ONE = 'Foo',
+    TWO = 'Bar'
 }
 
 

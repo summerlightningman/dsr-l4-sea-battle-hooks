@@ -115,6 +115,15 @@ class GameController {
         }
     }
 
+    placeShip(playerNum: PlayerNum, x: number, y: number): Partial<AppState> {
+        if (this.player.name === playerNum)
+            return {}
+
+        return {
+            gameController: this.setTargetCell(x, y)
+        }
+    }
+
     getEnemyPlayerName(): PlayerNum {
         return this.player.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
     }

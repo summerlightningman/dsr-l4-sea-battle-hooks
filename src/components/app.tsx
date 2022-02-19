@@ -46,12 +46,9 @@ class App extends Component<AppProps, AppState> {
 
     setTargetCell(playerNum: PlayerNum) {
         return (x: number, y: number) => () => {
-            if (this.state.gameController.player.name === playerNum)
-                return
-
-            this.setState(state => ({
-                gameController: state.gameController.setTargetCell(x, y)
-            }));
+            const updatedState = this.state.gameController.placeShip(playerNum, x, y)
+            // @ts-ignore
+            this.setState(updatedState)
         }
     }
 

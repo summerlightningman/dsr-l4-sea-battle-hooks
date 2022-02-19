@@ -28,7 +28,6 @@ class App extends Component<AppProps, AppState> {
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
         this.setTargetCell = this.setTargetCell.bind(this);
-        this.confirmAttack = this.confirmAttack.bind(this);
     }
 
     setInitialState() {
@@ -80,12 +79,15 @@ class App extends Component<AppProps, AppState> {
                 })
 
             case GameStage.GAMEPLAY:
-
                 const [x, y] = gameController.attackedCell;
-                if (enemy.cells[x][y] === CellType.KILLED) {
+                const enemyName = gameController.getEnemyPlayerName();
+                const updatedEnemy = enemy.attack(x, y);
+
+                if (updatedEnemy.cells[x][y] === CellType.KILLED) {
                     alert('Убил');
                     return this.setState({
-                        gameController: new GameController(gameController.player, GameStage.GAMEPLAY)
+                        gameController: new GameController(gameController.player, GameStage.GAMEPLAY),
+                        players: {...this.state.players, [enemyName]: updatedEnemy}
                     })
                 }
 
@@ -101,22 +103,10 @@ class App extends Component<AppProps, AppState> {
         }
     }
 
-    confirmAttack() {
-        const {gameController, players} = this.state;
-        const [x, y] = gameController.attackedCell;
-        const enemyName = gameController.getEnemyPlayerName();
-        const updatedPlayer = players[enemyName].attack(x, y);
-
-        this.setState(state => ({
-            players: {...state.players, [enemyName]: updatedPlayer}
-        }));
-        return this.goToNextState()
-    }
 
     render() {
         const actionButton = <ActionButton
             onNextStage={this.goToNextState}
-            onConfirmAttack={this.confirmAttack}
             gameStage={this.state.gameController.stage}
             isReadyForNextStage={this.state.gameController.isReadyForNextStage()}
         />;

@@ -27,7 +27,8 @@ class Board extends Component<BoardProps> {
                         // @ts-ignore
                         onCellClick={this.props.onCellClick(x, y)}
                     />
-                if (this.props.currState.stage === GameStage.GAMEPLAY && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
+                if ([GameStage.GAMEPLAY, GameStage.MOVE_FINISHED].includes(this.props.currState.stage)
+                    && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
                     const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
                     return <Cell
                         key={`${x}${y}`}

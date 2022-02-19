@@ -84,6 +84,14 @@ class App extends Component<AppProps, AppState> {
 
                 if (updatedEnemy.cells[x][y] === CellType.KILLED) {
                     alert('Убил');
+                    if (updatedEnemy.isLost()) {
+                        this.setState({
+                            gameController: new GameController(gameController.player, GameStage.ENDGAME),
+                            players: {...this.state.players, [enemyName]: updatedEnemy}
+                        });
+                        return alert(`Победил игрок ${gameController.player.name}. Поздравляем! 🥳🎉`)
+                    }
+
                     return this.setState({
                         gameController: new GameController(gameController.player, GameStage.GAMEPLAY),
                         players: {...this.state.players, [enemyName]: updatedEnemy}

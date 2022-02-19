@@ -38,6 +38,10 @@ class Player {
         return shipCount - this.aliveShipsCount()
     }
 
+    isLost() {
+        return this.aliveShipsCount() === 0
+    }
+
     private clonePlayer(): Player {
         const player = new Player(this.name);
         player.cells = this.cells;

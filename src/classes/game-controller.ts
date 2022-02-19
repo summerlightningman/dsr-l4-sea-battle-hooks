@@ -86,6 +86,15 @@ class GameController {
                 return ''
         }
     }
+
+    getPlayerState(): string {
+        switch (this.stage) {
+            case GameStage.SHIP_PLACEMENT:
+                return `Осталось поставить кораблей: ${this.player.shipsRemainingForBuild()}`
+            default:
+                return ''
+        }
+    }
 }
 
 export default GameController

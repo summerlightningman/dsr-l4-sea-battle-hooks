@@ -52,7 +52,8 @@ class Board extends Component<BoardProps> {
         );
 
         return <div className="board">
-            Игрок {this.props.player.name}
+            <span className="board__player-name">{this.props.player.name}</span>
+            <span className="board__player-state">{this.props.currState.getPlayerState()}</span>
             <div className="cell-list"
                  style={
                      {

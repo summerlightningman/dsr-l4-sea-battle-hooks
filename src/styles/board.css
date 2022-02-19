@@ -10,6 +10,17 @@
     padding: 0 0 15px 0;
 }
 
+.board__player-name {
+    padding-top: 20px;
+    padding-bottom: 5px;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 1px 1px darkgreen, -1px -1px aqua;
+}
+
+.board__player-state {
+    font-family: 'Press Start 2P', cursive;
+}
+
 .cell-list {
     display: flex;
     flex-direction: row;

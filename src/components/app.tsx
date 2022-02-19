@@ -1,19 +1,18 @@
 import React, {Component} from 'react'
 
-import {AppProps, AppState} from '../types/app';
-
-import {PlayerNum} from '../types/common';
-import {AppInitialState} from '../classes/app-initial-state';
-import GameController from '../classes/game-controller';
-
 import GameInfo from './game-info';
 import Board from './board';
-
-
+import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
 import ActionButton from "./action-button";
+
+import {AppProps, AppState} from '../types/app';
+import {PlayerNum} from '../types/common';
 import {CellType} from "../types/cell";
 import {GameStage} from "../types/game-controller";
+
+import AppInitialState from '../classes/app-initial-state';
+import GameController from '../classes/game-controller';
 import Player from "../classes/player";
 
 import '../styles/app.css';
@@ -150,6 +149,7 @@ class App extends Component<AppProps, AppState> {
                         ? confirmationScreen
                         : gameBoards
                 }
+                <Footer/>
             </main>
         )
     }

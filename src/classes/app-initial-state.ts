@@ -3,7 +3,7 @@ import Player from "./player";
 import {AppState} from "../types/app";
 import GameController from "./game-controller";
 
-export class AppInitialState implements AppState {
+class AppInitialState implements AppState {
     gameController: GameController;
     players: Record<PlayerNum, Player>;
 
@@ -15,3 +15,5 @@ export class AppInitialState implements AppState {
         this.gameController = new GameController(this.players[PlayerNum.ONE]);
     }
 }
+
+export default AppInitialState

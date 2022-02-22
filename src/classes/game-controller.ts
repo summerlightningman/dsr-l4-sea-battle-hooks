@@ -25,7 +25,7 @@ class GameController {
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
         this.goToNextStage = this.goToNextStage.bind(this);
-        this.getStateForShipPlacement = this.getStateForShipPlacement.bind(this)
+        this.placeShip = this.placeShip.bind(this)
         this.markCell = this.markCell.bind(this);
     }
 
@@ -112,14 +112,12 @@ class GameController {
         return {players, gameController}
     }
 
-    getStateForShipPlacement(players: PlayerList, playerNum: PlayerNum, x: number, y: number): Partial<AppState> {
-        if (this.player.name !== playerNum)
-            return {}
-
-        const player = players[playerNum];
-
-        return {
-            players: {...players, [playerNum]: player.placeShip(x, y)}
+    placeShip(playerNum: PlayerNum, x: number, y: number) {
+        return (state: AppState): Pick<AppState, 'players'> => {
+            const players = this.player.name === playerNum
+                ? {...state.players, [playerNum]: state.players[playerNum].placeShip(x, y)}
+                : state.players;
+            return {players}
         }
     }
 

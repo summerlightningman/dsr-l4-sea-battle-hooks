@@ -32,11 +32,8 @@ class App extends Component<AppProps, AppState> {
     }
 
     placeShip(playerNum: PlayerNum) {
-        return (x: number, y: number) => () => {
-            const updatedState = this.state.gameController.getStateForShipPlacement(this.state.players, playerNum, x, y)
-            // @ts-ignore
-            this.setState(updatedState);
-        };
+        return (x: number, y: number) =>
+            () => this.setState(this.state.gameController.placeShip(playerNum, x, y));
     }
 
     setTargetCell(playerNum: PlayerNum) {

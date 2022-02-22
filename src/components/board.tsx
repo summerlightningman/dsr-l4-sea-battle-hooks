@@ -26,20 +26,19 @@ class Board extends Component<BoardProps> {
     }
 
     render() {
-        const isHidden = this.props.gameController.player.name !== this.props.player.name
-            && this.props.gameController.stage === GameStage.SHIP_PLACEMENT
+        const isHidden = this.gameController.player.name !== this.player.name
+            && this.gameController.stage === GameStage.SHIP_PLACEMENT
 
         if (isHidden)
             return <></>
 
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
             ([x, y]) => {
-                let cellType = this.props.player.cells[x][y];
+                let cellType = this.player.cells[x][y];
                 if (!this.gameController.isPlayerClickedOwnCell(this.player.name) && this.gameController.isCellAttacked(x, y))
                     cellType = CellType.ATTACKED;
 
-                else if (this.gameController.isCombatGoing()
-                    && this.props.player.cells[x][y] === CellType.HAS_SHIP)
+                else if (this.gameController.isCombatGoing() && this.player.hasShipOn(x, y))
                     cellType = this.gameController.isPlayerClickedOwnCell(this.player.name) ? CellType.EMPTY : CellType.HAS_SHIP;
 
                 return <Cell
@@ -51,8 +50,8 @@ class Board extends Component<BoardProps> {
         );
 
         return <div className="board">
-            <span className="board__player-name">{this.props.player.name}</span>
-            <span className="board__player-state">{this.props.gameController.getPlayerState()}</span>
+            <span className="board__player-name">{this.player.name}</span>
+            <span className="board__player-state">{this.gameController.getPlayerState()}</span>
             <div className="cell-list"
                  style={
                      {
@@ -62,7 +61,6 @@ class Board extends Component<BoardProps> {
                  }>
                 {cellList}
             </div>
-            {this.props.player.name === this.props.gameController.player.name && this.props.children}
         </div>;
     }
 }

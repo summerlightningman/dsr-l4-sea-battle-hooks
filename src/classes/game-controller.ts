@@ -117,6 +117,7 @@ class GameController {
             const players = this.player.name === playerNum
                 ? {...state.players, [playerNum]: state.players[playerNum].placeShip(x, y)}
                 : state.players;
+
             return {players}
         }
     }

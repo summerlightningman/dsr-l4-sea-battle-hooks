@@ -23,31 +23,20 @@ class Board extends Component<BoardProps> {
 
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
             ([x, y]) => {
+                let cellType = this.props.player.cells[x][y];
                 if (this.props.player.name !== this.props.currState.player.name && isEquals(this.props.currState.attackedCell, [x, y]))
-                    return <Cell
-                        key={`${x}${y}`}
-                        cellType={CellType.ATTACKED}
-                        // @ts-ignore
-                        onCellClick={this.props.onCellClick(x, y)}
-                    />
-                if ([GameStage.GAMEPLAY, GameStage.MOVE_FINISHED].includes(this.props.currState.stage)
-                    && this.props.player.cells[x][y] === CellType.HAS_SHIP) {
-                    const cellState = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
-                    return <Cell
-                        key={`${x}${y}`}
-                        cellType={cellState}
-                        // @ts-ignore
-                        onCellClick={this.props.onCellClick(x, y)}
-                    />
-                } else {
-                    return <Cell
-                        key={`${x}${y}`}
-                        cellType={this.props.player.cells[x][y]}
-                        // @ts-ignore
-                        onCellClick={this.props.onCellClick(x, y)}
-                    />
+                    cellType = CellType.ATTACKED;
 
-                }
+                else if ([GameStage.GAMEPLAY, GameStage.MOVE_FINISHED].includes(this.props.currState.stage)
+                    && this.props.player.cells[x][y] === CellType.HAS_SHIP)
+                    cellType = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
+
+
+                return <Cell
+                    key={`${x}${y}`}
+                    cellType={cellType}
+                    onCellClick={this.props.onCellClick(x, y)}
+                />
             }
         );
 

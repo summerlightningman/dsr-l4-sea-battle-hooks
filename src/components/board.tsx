@@ -10,9 +10,10 @@ import {boardHeight, boardWidth, cellSize} from "../config";
 
 import {generateCoordinatePairs} from "../functions";
 
-import '../styles/board.css';
 import GameController from "../classes/game-controller";
 import Player from "../classes/player";
+
+import '../styles/board.css';
 
 class Board extends Component<BoardProps> {
     gameController: GameController;

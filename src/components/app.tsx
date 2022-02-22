@@ -35,7 +35,7 @@ class App extends Component<AppProps, AppState> {
         return (x: number, y: number) => () => {
             const updatedState = this.state.gameController.getStateForShipPlacement(this.state.players, playerNum, x, y)
             // @ts-ignore
-            this.setState(updatedState)
+            this.setState(updatedState);
         };
     }
 
@@ -43,14 +43,12 @@ class App extends Component<AppProps, AppState> {
         return (x: number, y: number) => () => {
             const updatedState = this.state.gameController.getStateForCellMark(this.state.players, playerNum, x, y)
             // @ts-ignore
-            this.setState(updatedState)
+            this.setState(updatedState);
         }
     }
 
     goToNextState() {
-        const updatedState = this.state.gameController.getStateForNextStage(this.state.players);
-        // @ts-ignore
-        this.setState(updatedState);
+        return this.setState(this.state.gameController.goToNextStage);
     }
 
 
@@ -85,7 +83,6 @@ class App extends Component<AppProps, AppState> {
         return (
             <div className="content">
                 <Header
-                    currState={this.state.gameController}
                     resetAll={this.setInitialState}
                 />
                 <main className="main">

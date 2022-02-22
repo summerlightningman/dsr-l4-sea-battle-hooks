@@ -1,4 +1,5 @@
-import {Arena, PlayerNum} from "../types/common";
+import {Arena} from "../types/common";
+import {PlayerNum} from "../types/player";
 import {generateArena} from "../functions";
 import {boardHeight, boardWidth, shipCount} from "../config";
 import {CellType} from "../types/cell";

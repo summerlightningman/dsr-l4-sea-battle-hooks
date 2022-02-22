@@ -24,7 +24,7 @@ class GameController {
         this.clone = this.clone.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
-        this.getStateForNextStage = this.getStateForNextStage.bind(this);
+        this.goToNextStage = this.goToNextStage.bind(this);
         this.getStateForShipPlacement = this.getStateForShipPlacement.bind(this)
         this.getStateForCellMark = this.getStateForCellMark.bind(this);
     }
@@ -69,24 +69,20 @@ class GameController {
         return !players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild()
     }
 
-    getStateForNextStage(players: PlayerList): Partial<AppState> {
+    goToNextStage(state: AppState): Pick<AppState, 'players' | 'gameController'> {
+        let {players, gameController} = state;
         const enemy: Player = players[this.getEnemyPlayerName()];
 
         switch (this.stage) {
             case GameStage.SHIP_PLACEMENT:
-                if (this.allShipsWasPlaced(players))
-                    return {
-                        gameController: new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
-                    }
-
-                return {
-                    gameController: new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
-                }
+                gameController = this.allShipsWasPlaced(players)
+                    ? new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
+                    : new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                break;
 
             case GameStage.MOVE_CONFIRMATION:
-                return {
-                    gameController: new GameController(this.player, GameStage.GAMEPLAY)
-                }
+                gameController = new GameController(this.player, GameStage.GAMEPLAY)
+                break;
 
             case GameStage.GAMEPLAY:
                 const [x, y] = this.attackedCell;
@@ -96,31 +92,25 @@ class GameController {
                 if (updatedEnemy.cells[x][y] === CellType.KILLED) {
                     alert('Убил');
                     if (updatedEnemy.isLost()) {
-                        alert(`Победил игрок ${this.player.name}. Поздравляем! 🥳🎉`)
-                        return {
-                            gameController: new GameController(this.player, GameStage.ENDGAME),
-                            players: {...players, [enemyName]: updatedEnemy}
-                        }
+                        alert(`Победил игрок ${this.player.name}. Поздравляем! 🥳🎉`);
+                        gameController = new GameController(this.player, GameStage.ENDGAME);
+                    } else {
+                        gameController = new GameController(this.player, GameStage.GAMEPLAY)
                     }
-
-                    return {
-                        gameController: new GameController(this.player, GameStage.GAMEPLAY),
-                        players: {...players, [enemyName]: updatedEnemy}
-                    }
+                    players = {...players, [enemyName]: updatedEnemy}
                 }
 
                 alert('Промах');
-                return {
-                    gameController: new GameController(this.player, GameStage.MOVE_FINISHED)
-                }
+                gameController = new GameController(this.player, GameStage.MOVE_FINISHED)
+                break;
 
             case GameStage.MOVE_FINISHED:
-                return {
-                    gameController: new GameController(enemy, GameStage.MOVE_CONFIRMATION)
-                }
+                gameController = new GameController(enemy, GameStage.MOVE_CONFIRMATION)
+                break;
             default:
-                return {}
+                break;
         }
+        return {players, gameController}
     }
 
     getStateForShipPlacement(players: PlayerList, playerNum: PlayerNum, x: number, y: number): Partial<AppState> {

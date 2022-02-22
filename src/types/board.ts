@@ -3,7 +3,7 @@ import GameController from "../classes/game-controller";
 
 export interface BoardProps {
     player: Player,
-    currState: GameController
+    gameController: GameController
     onCellClick: (x: number, y: number) => () => void
 }
 

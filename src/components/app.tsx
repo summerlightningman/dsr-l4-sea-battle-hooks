@@ -32,7 +32,6 @@ class App extends Component<AppProps, AppState> {
     }
 
     placeShip(playerNum: PlayerNum) {
-        console.log(1);
         return (x: number, y: number) =>
             () => this.setState(this.state.gameController.placeShip(playerNum, x, y));
     }
@@ -67,7 +66,7 @@ class App extends Component<AppProps, AppState> {
                             <Board
                                 player={player}
                                 key={player.name}
-                                currState={this.state.gameController}
+                                gameController={this.state.gameController}
                                 onCellClick={onCellClick(player.name)}
                             />
                     )

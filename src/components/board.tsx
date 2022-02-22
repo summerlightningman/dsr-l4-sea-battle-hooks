@@ -8,15 +8,26 @@ import {CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
 
-import {generateCoordinatePairs, isEquals} from "../functions";
+import {generateCoordinatePairs} from "../functions";
 
 import '../styles/board.css';
+import GameController from "../classes/game-controller";
+import Player from "../classes/player";
 
 class Board extends Component<BoardProps> {
+    gameController: GameController;
+    player: Player;
+
+    constructor(props: BoardProps) {
+        super(props);
+
+        this.gameController = props.gameController;
+        this.player = props.player;
+    }
 
     render() {
-        const isHidden = this.props.currState.player.name !== this.props.player.name
-            && this.props.currState.stage === GameStage.SHIP_PLACEMENT
+        const isHidden = this.props.gameController.player.name !== this.props.player.name
+            && this.props.gameController.stage === GameStage.SHIP_PLACEMENT
 
         if (isHidden)
             return <></>
@@ -24,13 +35,12 @@ class Board extends Component<BoardProps> {
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
             ([x, y]) => {
                 let cellType = this.props.player.cells[x][y];
-                if (this.props.player.name !== this.props.currState.player.name && isEquals(this.props.currState.attackedCell, [x, y]))
+                if (!this.gameController.isPlayerClickedOwnCell(this.player.name) && this.gameController.isCellAttacked(x, y))
                     cellType = CellType.ATTACKED;
 
-                else if ([GameStage.GAMEPLAY, GameStage.MOVE_FINISHED].includes(this.props.currState.stage)
+                else if (this.gameController.isCombatGoing()
                     && this.props.player.cells[x][y] === CellType.HAS_SHIP)
-                    cellType = this.props.player.name !== this.props.currState.player.name ? CellType.EMPTY : CellType.HAS_SHIP;
-
+                    cellType = this.gameController.isPlayerClickedOwnCell(this.player.name) ? CellType.EMPTY : CellType.HAS_SHIP;
 
                 return <Cell
                     key={`${x}${y}`}
@@ -42,7 +52,7 @@ class Board extends Component<BoardProps> {
 
         return <div className="board">
             <span className="board__player-name">{this.props.player.name}</span>
-            <span className="board__player-state">{this.props.currState.getPlayerState()}</span>
+            <span className="board__player-state">{this.props.gameController.getPlayerState()}</span>
             <div className="cell-list"
                  style={
                      {
@@ -52,7 +62,7 @@ class Board extends Component<BoardProps> {
                  }>
                 {cellList}
             </div>
-            {this.props.player.name === this.props.currState.player.name && this.props.children}
+            {this.props.player.name === this.props.gameController.player.name && this.props.children}
         </div>;
     }
 }

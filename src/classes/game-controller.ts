@@ -27,6 +27,9 @@ class GameController {
         this.goToNextStage = this.goToNextStage.bind(this);
         this.placeShip = this.placeShip.bind(this)
         this.markCell = this.markCell.bind(this);
+        this.isPlayerClickedOwnCell = this.isPlayerClickedOwnCell.bind(this);
+        this.isCombatGoing = this.isCombatGoing.bind(this);
+        this.isCellAttacked = this.isCellAttacked.bind(this);
     }
 
     private clone() {
@@ -134,6 +137,22 @@ class GameController {
             default:
                 return ''
         }
+    }
+
+    isPlayerClickedOwnCell(playerNum: PlayerNum) {
+        return playerNum === this.player.name
+    }
+
+    isCellAttacked(x: number, y: number) {
+        return isEquals(this.attackedCell, [x, y])
+    }
+
+    isCombatGoing() {
+        const combatGameStages = [
+            GameStage.GAMEPLAY,
+            GameStage.MOVE_FINISHED
+        ]
+        return combatGameStages.includes(this.stage)
     }
 }
 

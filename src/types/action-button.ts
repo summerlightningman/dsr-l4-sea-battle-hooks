@@ -5,5 +5,3 @@ export interface ActionButtonProps {
     gameStage: GameStage;
     isReadyForNextStage: boolean;
 }
-
-export type ButtonName = string;

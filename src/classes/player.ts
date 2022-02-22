@@ -67,6 +67,10 @@ class Player {
             return this.setCellType(x, y, CellType.KILLED)
         return this
     }
+
+    hasShipOn(x: number, y: number): boolean {
+        return this.cells[x][y] === CellType.HAS_SHIP
+    }
 }
 
 export default Player

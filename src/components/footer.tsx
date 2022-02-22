@@ -1,17 +1,14 @@
 import {Component} from "react";
 import {CellType} from "../types/cell";
 
-
 import Cell from "./cell";
-
-import {FooterProps} from "../types/footer";
 
 import '../styles/footer.css';
 
-class Footer extends Component<FooterProps> {
+class Footer extends Component {
     cellDescriptions: [CellType, string][]
 
-    constructor(props: FooterProps) {
+    constructor(props: {}) {
         super(props);
 
         this.cellDescriptions = [

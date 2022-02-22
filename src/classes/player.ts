@@ -8,12 +8,10 @@ import {CellType} from "../types/cell";
 class Player {
     cells: Arena;
     name: PlayerNum;
-    isVisible: boolean;
 
-    constructor(name: PlayerNum, isVisible = true) {
+    constructor(name: PlayerNum) {
         this.name = name;
         this.cells = generateArena(boardWidth, boardHeight);
-        this.isVisible = isVisible;
 
         this.aliveShipsCount = this.aliveShipsCount.bind(this);
         this.shipsRemainingForBuild = this.shipsRemainingForBuild.bind(this);

@@ -10,7 +10,7 @@ class AppInitialState implements AppState {
 
     constructor() {
         this.players = {
-            [PlayerNum.ONE]: new Player(PlayerNum.ONE, true),
+            [PlayerNum.ONE]: new Player(PlayerNum.ONE),
             [PlayerNum.TWO]: new Player(PlayerNum.TWO)
         }
         this.gameController = new GameController(this.players[PlayerNum.ONE]);

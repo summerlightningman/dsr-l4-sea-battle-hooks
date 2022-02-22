@@ -34,6 +34,7 @@ class App extends Component<AppProps, AppState> {
     placeShip(playerNum: PlayerNum) {
         return (x: number, y: number) =>
             () => this.setState(this.state.gameController.placeShip(playerNum, x, y));
+
     }
 
     setTargetCell(playerNum: PlayerNum) {

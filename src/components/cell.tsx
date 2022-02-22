@@ -6,6 +6,15 @@ import {cellSize} from "../config";
 import "../styles/cell.css";
 
 class Cell extends Component<CellProps> {
+    constructor(props: CellProps) {
+        super(props);
+
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick() {
+        this.props.onCellClick();
+    }
 
     render() {
         const style: Record<CellType, string> = {
@@ -17,7 +26,7 @@ class Cell extends Component<CellProps> {
         };
 
         const className = 'cell' +  style[this.props.cellType];
-        return <div className={className} style={{width: cellSize, height: cellSize}} onClick={this.props.onCellClick}>
+        return <div className={className} style={{width: cellSize, height: cellSize}} onClick={this.handleClick}>
 
         </div>
     }

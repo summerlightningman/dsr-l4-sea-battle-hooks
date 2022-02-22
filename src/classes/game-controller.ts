@@ -36,16 +36,6 @@ class GameController {
         return new GameController(this.player, this.stage);
     }
 
-    markCell(playerNum: PlayerNum, x: number, y: number) {
-        const updatedGameController = this.clone();
-        updatedGameController.attackedCell = isEquals(this.attackedCell, emptyTargetCell)
-            ? [x, y]
-            : emptyTargetCell;
-        return () => ({
-            gameController: updatedGameController
-        })
-    }
-
     isTargetEmpty() {
         return isEquals(this.attackedCell, emptyTargetCell)
     }
@@ -116,12 +106,16 @@ class GameController {
     }
 
     placeShip(playerNum: PlayerNum, x: number, y: number) {
-        return (state: AppState): Pick<AppState, 'players'> => {
-            const players = this.player.name === playerNum
-                ? {...state.players, [playerNum]: state.players[playerNum].placeShip(x, y)}
-                : state.players;
+        return (state: AppState) => {
+            if (this.player.name !== playerNum)
+                return {players: state.players}
 
-            return {players}
+            const player = state.players[playerNum];
+            const updatedPlayer = player.placeShip(x, y);
+
+            return {
+                players: {...state.players, [playerNum]: updatedPlayer}
+            }
         }
     }
 
@@ -129,6 +123,15 @@ class GameController {
         return this.player.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
     }
 
+    markCell(playerNum: PlayerNum, x: number, y: number) {
+        const updatedGameController = this.clone();
+        updatedGameController.attackedCell = isEquals(this.attackedCell, emptyTargetCell)
+            ? [x, y]
+            : emptyTargetCell;
+        return () => ({
+            gameController: updatedGameController
+        })
+    }
 
     getPlayerState(): string {
         switch (this.stage) {

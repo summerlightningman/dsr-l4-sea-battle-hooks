@@ -26,22 +26,21 @@ class GameController {
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
         this.goToNextStage = this.goToNextStage.bind(this);
         this.getStateForShipPlacement = this.getStateForShipPlacement.bind(this)
-        this.getStateForCellMark = this.getStateForCellMark.bind(this);
+        this.markCell = this.markCell.bind(this);
     }
 
     private clone() {
         return new GameController(this.player, this.stage);
     }
 
-    getStateForCellMark(players: PlayerList, playerNum: PlayerNum, x: number, y: number) {
+    markCell(playerNum: PlayerNum, x: number, y: number) {
         const updatedGameController = this.clone();
-        if (isEquals(this.attackedCell, emptyTargetCell))
-            updatedGameController.attackedCell = [x, y];
-        else
-            updatedGameController.attackedCell = emptyTargetCell;
-        return {
+        updatedGameController.attackedCell = isEquals(this.attackedCell, emptyTargetCell)
+            ? [x, y]
+            : emptyTargetCell;
+        return () => ({
             gameController: updatedGameController
-        }
+        })
     }
 
     isTargetEmpty() {

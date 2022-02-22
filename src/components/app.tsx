@@ -40,11 +40,8 @@ class App extends Component<AppProps, AppState> {
     }
 
     setTargetCell(playerNum: PlayerNum) {
-        return (x: number, y: number) => () => {
-            const updatedState = this.state.gameController.getStateForCellMark(this.state.players, playerNum, x, y)
-            // @ts-ignore
-            this.setState(updatedState);
-        }
+        return (x: number, y: number) =>
+            () => this.setState(this.state.gameController.markCell(playerNum, x, y));
     }
 
     goToNextState() {

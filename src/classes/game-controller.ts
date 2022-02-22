@@ -25,7 +25,7 @@ class GameController {
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
         this.goToNextStage = this.goToNextStage.bind(this);
-        this.placeShip = this.placeShip.bind(this)
+        this.placeShip = this.placeShip.bind(this);
         this.markCell = this.markCell.bind(this);
         this.isPlayerClickedOwnCell = this.isPlayerClickedOwnCell.bind(this);
         this.isCombatGoing = this.isCombatGoing.bind(this);
@@ -154,7 +154,7 @@ class GameController {
         const combatGameStages = [
             GameStage.GAMEPLAY,
             GameStage.MOVE_FINISHED
-        ]
+        ];
         return combatGameStages.includes(this.stage)
     }
 }

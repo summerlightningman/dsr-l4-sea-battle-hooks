@@ -1,5 +1,6 @@
 import {CellType} from "./types/cell";
 import {Arena} from "./types/common";
+import {BoardHeight, BoardWidth} from "./types/board";
 
 export const generateCoordinatePairs = (left: number, right: number): number[][] => {
     const arr = [];
@@ -10,7 +11,7 @@ export const generateCoordinatePairs = (left: number, right: number): number[][]
     return arr
 }
 
-export const generateArena = (width: number, height: number): Arena =>
+export const generateArena = (width: BoardWidth, height: BoardHeight): Arena =>
     Array(height).fill(null).map(_ => Array(width).fill(null).map(_ => CellType.EMPTY));
 
 export const isEquals = <A>(left: A[], right: A[]): boolean =>

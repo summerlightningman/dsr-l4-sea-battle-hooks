@@ -6,7 +6,7 @@ import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
 import ActionButton from "./action-button";
 
-import {AppProps, AppState} from '../types/app';
+import {AppProps, AppState, CellClickHandler} from '../types/app';
 import {PlayerNum} from '../types/player';
 
 import AppInitialState from '../classes/app-initial-state';
@@ -17,6 +17,7 @@ import GameController from "../classes/game-controller";
 
 class App extends Component<AppProps, AppState> {
     gameController: GameController;
+    onCellClick: CellClickHandler;
 
     constructor(props: AppProps) {
         super(props);
@@ -24,9 +25,10 @@ class App extends Component<AppProps, AppState> {
 
         this.gameController = new GameController(this.state.gameState);
         this.setInitialState = this.setInitialState.bind(this);
-        this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
-        this.setTargetCell = this.setTargetCell.bind(this);
+        this.onCellClick = this.gameController.isShipPlacementNow()
+            ? this.placeShip.bind(this)
+            : this.setTargetCell.bind(this);
     }
 
     setInitialState() {
@@ -54,9 +56,7 @@ class App extends Component<AppProps, AppState> {
             gameStage={this.state.gameState.currStage}
             isReadyForNextStage={this.gameController.isReadyForNextStage()}
         />;
-        const onCellClick = this.gameController.isShipPlacementNow()
-            ? this.placeShip
-            : this.setTargetCell;
+
 
         const confirmationScreen = <ConfirmationScreen playerName={this.state.gameState.currPlayer.name}/>;
 
@@ -69,7 +69,7 @@ class App extends Component<AppProps, AppState> {
                                 player={player}
                                 key={player.name}
                                 gameController={this.gameController}
-                                onCellClick={onCellClick(player.name)}
+                                onCellClick={this.onCellClick(player.name)}
                             />
                     )
                 }

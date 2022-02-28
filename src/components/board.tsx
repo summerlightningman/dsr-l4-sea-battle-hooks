@@ -26,6 +26,7 @@ class Board extends Component<BoardProps> {
         this.player = props.player;
 
         this.isTargetCell = this.isTargetCell.bind(this);
+        this.isBoardHidden = this.isBoardHidden.bind(this);
     }
 
     isTargetCell(coords: CellCoords) {

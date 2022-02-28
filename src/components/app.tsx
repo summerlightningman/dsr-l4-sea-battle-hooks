@@ -13,6 +13,7 @@ import AppInitialState from '../classes/app-initial-state';
 
 import '../styles/app.css';
 import GameController from "../classes/game-controller";
+import {CellCoords} from "../types/game-controller";
 
 
 class App extends Component<AppProps, AppState> {
@@ -36,13 +37,13 @@ class App extends Component<AppProps, AppState> {
     }
 
     placeShip(playerNum: PlayerNum) {
-        return (x: number, y: number) =>
-            () => this.setState(this.gameController.placeShip(playerNum, x, y));
+        return (coords: CellCoords) =>
+            () => this.setState(this.gameController.placeShip(playerNum, coords));
     }
 
     setTargetCell(playerNum: PlayerNum) {
-        return (x: number, y: number) =>
-            () => this.setState(this.gameController.markCell(playerNum, x, y));
+        return (coords: CellCoords) =>
+            () => this.setState(this.gameController.markCell(playerNum, coords));
     }
 
     goToNextState() {

@@ -3,6 +3,7 @@ import {PlayerNum} from "../types/player";
 import {generateArena} from "../functions";
 import {boardHeight, boardWidth, shipCount} from "../config";
 import {CellType} from "../types/cell";
+import {CellCoords} from "../types/game-controller";
 
 
 class Player {
@@ -22,7 +23,8 @@ class Player {
 
     }
 
-    private setCellType(x: number, y: number, type: CellType) {
+    private setCellType(coords: CellCoords, type: CellType) {
+        const [x, y] = coords;
         const updatedPlayer = this.clonePlayer();
         updatedPlayer.cells[x][y] = type;
         return updatedPlayer
@@ -47,26 +49,29 @@ class Player {
         return player
     }
 
-    placeShip(x: number, y: number): Player {
+    placeShip(coords: CellCoords): Player {
+        const [x, y] = coords;
         if (this.cells[x][y] === CellType.HAS_SHIP) {
-            return this.setCellType(x, y, CellType.EMPTY)
+            return this.setCellType(coords, CellType.EMPTY)
         } else {
             if (this.aliveShipsCount() >= shipCount)
                 return this
-            return this.setCellType(x, y, CellType.HAS_SHIP)
+            return this.setCellType(coords, CellType.HAS_SHIP)
         }
     }
 
-    attack(x: number, y: number): Player {
+    attack(coords: CellCoords): Player {
+        const [x, y] = coords;
         const cellState = this.cells[x][y];
         if (cellState === CellType.EMPTY)
-            return this.setCellType(x, y, CellType.MISSED)
+            return this.setCellType(coords, CellType.MISSED)
         if (cellState === CellType.HAS_SHIP)
-            return this.setCellType(x, y, CellType.KILLED)
+            return this.setCellType(coords, CellType.KILLED)
         return this
     }
 
-    hasShipOn(x: number, y: number): boolean {
+    hasShipOn(coords: CellCoords): boolean {
+        const [x, y] = coords;
         return this.cells[x][y] === CellType.HAS_SHIP
     }
 }

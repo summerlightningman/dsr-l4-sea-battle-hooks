@@ -43,17 +43,18 @@ class Board extends Component<BoardProps> {
             return <></>
 
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
-            ([x, y]) => {
+            (coords) => {
+                const [x, y] = coords;
                 let cellType = this.player.cells[x][y];
-                if (this.isTargetCell([x, y]))
+                if (this.isTargetCell(coords))
                     cellType = CellType.ATTACKED;
-                else if (this.gameController.isCombatGoing() && this.player.hasShipOn(x, y))
+                else if (this.gameController.isCombatGoing() && this.player.hasShipOn(coords))
                     cellType = this.gameController.isPlayerClickedOwnCell(this.player.name) ? CellType.EMPTY : CellType.HAS_SHIP;
 
                 return <Cell
-                    key={`${x}${y}`}
+                    key={`${x},${y}`}
                     cellType={cellType}
-                    onCellClick={this.props.onCellClick(x, y)}
+                    onCellClick={this.props.onCellClick(coords)}
                 />
             }
         );

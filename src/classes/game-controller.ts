@@ -78,7 +78,7 @@ class GameController {
             case GameStage.GAMEPLAY:
                 const [x, y] = gameState.targetCell;
                 const enemyName = this.getEnemyPlayerName();
-                const updatedEnemy = enemy.attack(x, y);
+                const updatedEnemy = enemy.attack(gameState.targetCell);
 
                 if (updatedEnemy.cells[x][y] === CellType.KILLED) {
                     alert('Убил');
@@ -104,13 +104,13 @@ class GameController {
         return {players, gameState}
     }
 
-    placeShip(playerNum: PlayerNum, x: number, y: number) {
+    placeShip(playerNum: PlayerNum, coords: CellCoords) {
         return (state: AppState) => {
             if (this.gameState.currPlayer.name !== playerNum)
                 return {players: state.players}
 
             const player = state.players[playerNum];
-            const updatedPlayer = player.placeShip(x, y);
+            const updatedPlayer = player.placeShip(coords);
 
             return {
                 players: {...state.players, [playerNum]: updatedPlayer}
@@ -118,10 +118,10 @@ class GameController {
         }
     }
 
-    markCell(playerNum: PlayerNum, x: number, y: number) {
+    markCell(playerNum: PlayerNum, coords: CellCoords) {
         const updatedGameState = new GameState(this.gameState.currPlayer, this.gameState.currStage);
         updatedGameState.targetCell = isEquals(this.gameState.targetCell, emptyTargetCell)
-            ? [x, y]
+            ? coords
             : emptyTargetCell;
         return () => ({
             gameState: updatedGameState

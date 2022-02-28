@@ -1,11 +1,11 @@
 import Player from "./player";
-import GameController from "./game-controller";
 
 import {PlayerList, PlayerNum} from "../types/player";
 import {AppState} from "../types/app";
+import GameState from "./game-state";
 
 class AppInitialState implements AppState {
-    gameController: GameController;
+    gameState: GameState;
     players: PlayerList;
 
     constructor() {
@@ -13,7 +13,7 @@ class AppInitialState implements AppState {
             [PlayerNum.ONE]: new Player(PlayerNum.ONE),
             [PlayerNum.TWO]: new Player(PlayerNum.TWO)
         }
-        this.gameController = new GameController(this.players[PlayerNum.ONE]);
+        this.gameState = new GameState(this.players[PlayerNum.ONE]);
     }
 }
 

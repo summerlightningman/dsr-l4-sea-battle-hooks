@@ -1,9 +1,9 @@
-import GameController from "../classes/game-controller";
 import {PlayerList} from "./player";
+import GameState from "../classes/game-state";
 
 export type AppProps = object;
 
 export interface AppState {
-    gameController: GameController,
+    gameState: GameState;
     players: PlayerList
 }

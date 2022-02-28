@@ -3,7 +3,7 @@ import {Component} from 'react';
 import Cell from "./cell";
 
 import {BoardProps} from '../types/board';
-import {GameStage} from "../types/game-controller";
+import {CellCoords} from "../types/game-controller";
 import {CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
@@ -24,21 +24,28 @@ class Board extends Component<BoardProps> {
 
         this.gameController = props.gameController;
         this.player = props.player;
+
+        this.isTargetCell = this.isTargetCell.bind(this);
+    }
+
+    isTargetCell(coords: CellCoords) {
+        return !this.gameController.isPlayerClickedOwnCell(this.player.name) && this.gameController.isTargetCell(coords)
+    }
+
+    isBoardHidden() {
+        return this.gameController.gameState.currPlayer.name !== this.player.name
+            && this.gameController.isShipPlacementNow()
     }
 
     render() {
-        const isHidden = this.gameController.player.name !== this.player.name
-            && this.gameController.stage === GameStage.SHIP_PLACEMENT
-
-        if (isHidden)
+        if (this.isBoardHidden())
             return <></>
 
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
             ([x, y]) => {
                 let cellType = this.player.cells[x][y];
-                if (!this.gameController.isPlayerClickedOwnCell(this.player.name) && this.gameController.isCellAttacked(x, y))
+                if (this.isTargetCell([x, y]))
                     cellType = CellType.ATTACKED;
-
                 else if (this.gameController.isCombatGoing() && this.player.hasShipOn(x, y))
                     cellType = this.gameController.isPlayerClickedOwnCell(this.player.name) ? CellType.EMPTY : CellType.HAS_SHIP;
 

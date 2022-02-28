@@ -8,23 +8,25 @@ import ActionButton from "./action-button";
 
 import {AppProps, AppState} from '../types/app';
 import {PlayerNum} from '../types/player';
-import {GameStage} from "../types/game-controller";
 
 import AppInitialState from '../classes/app-initial-state';
 
 import '../styles/app.css';
+import GameController from "../classes/game-controller";
 
 
 class App extends Component<AppProps, AppState> {
+    gameController: GameController;
+
     constructor(props: AppProps) {
         super(props);
         this.state = new AppInitialState();
 
+        this.gameController = new GameController(this.state.gameState);
         this.setInitialState = this.setInitialState.bind(this);
         this.placeShip = this.placeShip.bind(this);
         this.goToNextState = this.goToNextState.bind(this);
         this.setTargetCell = this.setTargetCell.bind(this);
-
     }
 
     setInitialState() {
@@ -33,30 +35,30 @@ class App extends Component<AppProps, AppState> {
 
     placeShip(playerNum: PlayerNum) {
         return (x: number, y: number) =>
-            () => this.setState(this.state.gameController.placeShip(playerNum, x, y));
+            () => this.setState(this.gameController.placeShip(playerNum, x, y));
     }
 
     setTargetCell(playerNum: PlayerNum) {
         return (x: number, y: number) =>
-            () => this.setState(this.state.gameController.markCell(playerNum, x, y));
+            () => this.setState(this.gameController.markCell(playerNum, x, y));
     }
 
     goToNextState() {
-        return this.setState(this.state.gameController.goToNextStage);
+        return this.setState(this.gameController.goToNextStage);
     }
 
 
     render() {
         const actionButton = <ActionButton
             onNextStage={this.goToNextState}
-            gameStage={this.state.gameController.stage}
-            isReadyForNextStage={this.state.gameController.isReadyForNextStage()}
+            gameStage={this.state.gameState.currStage}
+            isReadyForNextStage={this.gameController.isReadyForNextStage()}
         />;
-        const onCellClick = this.state.gameController.stage === GameStage.SHIP_PLACEMENT
+        const onCellClick = this.gameController.isShipPlacementNow()
             ? this.placeShip
             : this.setTargetCell;
 
-        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameController.player.name}/>;
+        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameState.currPlayer.name}/>;
 
         const gameBoards = (
             <div className="game-boards">
@@ -66,7 +68,7 @@ class App extends Component<AppProps, AppState> {
                             <Board
                                 player={player}
                                 key={player.name}
-                                gameController={this.state.gameController}
+                                gameController={this.gameController}
                                 onCellClick={onCellClick(player.name)}
                             />
                     )
@@ -81,7 +83,7 @@ class App extends Component<AppProps, AppState> {
                 />
                 <main className="main">
                     {
-                        this.state.gameController.stage === GameStage.MOVE_CONFIRMATION
+                        this.gameController.isMoveConfirmationNow()
                             ? confirmationScreen
                             : gameBoards
                     }

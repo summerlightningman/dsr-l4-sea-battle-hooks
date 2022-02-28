@@ -7,45 +7,44 @@ import {AppState} from "../types/app";
 import {emptyTargetCell} from "../config";
 
 import {isEquals} from "../functions";
+import GameState from "./game-state";
 
 class GameController {
-    stage: GameStage;
-    player: Player;
-    attackedCell: CellCoords;
+    gameState: GameState;
 
-    constructor(player: Player, stage: GameStage = GameStage.SHIP_PLACEMENT) {
-        this.player = player;
-        this.stage = stage;
-        this.attackedCell = emptyTargetCell;
-
+    constructor(gameState: GameState) {
+        this.gameState = gameState;
 
         this.toString = this.toString.bind(this);
-        this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
-        this.clone = this.clone.bind(this);
         this.isTargetEmpty = this.isTargetEmpty.bind(this);
+        this.isReadyForNextStage = this.isReadyForNextStage.bind(this,);
         this.getEnemyPlayerName = this.getEnemyPlayerName.bind(this);
         this.goToNextStage = this.goToNextStage.bind(this);
         this.placeShip = this.placeShip.bind(this);
         this.markCell = this.markCell.bind(this);
+        this.getPlayerState = this.getPlayerState.bind(this);
         this.isPlayerClickedOwnCell = this.isPlayerClickedOwnCell.bind(this);
         this.isCombatGoing = this.isCombatGoing.bind(this);
-        this.isCellAttacked = this.isCellAttacked.bind(this);
+        this.isTargetCell = this.isTargetCell.bind(this);
+        this.isShipPlacementNow = this.isShipPlacementNow.bind(this);
     }
 
-    private clone() {
-        return new GameController(this.player, this.stage);
-    }
 
     isTargetEmpty() {
-        return isEquals(this.attackedCell, emptyTargetCell)
+        return isEquals(this.gameState.targetCell, emptyTargetCell)
+    }
+
+    getEnemyPlayerName(): PlayerNum {
+        return this.gameState.currPlayer.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
     }
 
     isReadyForNextStage(): boolean {
-        switch (this.stage) {
+        const {currStage, currPlayer} = this.gameState;
+        switch (currStage) {
             case GameStage.SHIP_PLACEMENT:
-                if (this.player.name === PlayerNum.ONE && !this.player.shipsRemainingForBuild())
+                if (currPlayer.name === PlayerNum.ONE && !currPlayer.shipsRemainingForBuild())
                     return true
-                return this.player.name === PlayerNum.TWO && !this.player.shipsRemainingForBuild();
+                return currPlayer.name === PlayerNum.TWO && !currPlayer.shipsRemainingForBuild();
             case GameStage.MOVE_CONFIRMATION:
                 return true
             case GameStage.GAMEPLAY:
@@ -57,57 +56,57 @@ class GameController {
         }
     }
 
-    allShipsWasPlaced(players: PlayerList) {
+    areAllShipsWerePlaced(players: PlayerList) {
         return !players[PlayerNum.ONE].shipsRemainingForBuild() && !players[PlayerNum.TWO].shipsRemainingForBuild()
     }
 
-    goToNextStage(state: AppState): Pick<AppState, 'players' | 'gameController'> {
-        let {players, gameController} = state;
+    goToNextStage(state: AppState): Pick<AppState, 'players' | 'gameState'> {
+        let {players, gameState} = state;
         const enemy: Player = players[this.getEnemyPlayerName()];
 
-        switch (this.stage) {
+        switch (state.gameState.currStage) {
             case GameStage.SHIP_PLACEMENT:
-                gameController = this.allShipsWasPlaced(players)
-                    ? new GameController(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
-                    : new GameController(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT)
+                gameState = this.areAllShipsWerePlaced(players)
+                    ? new GameState(players[PlayerNum.ONE], GameStage.MOVE_CONFIRMATION)
+                    : new GameState(players[PlayerNum.TWO], GameStage.SHIP_PLACEMENT);
                 break;
 
             case GameStage.MOVE_CONFIRMATION:
-                gameController = new GameController(this.player, GameStage.GAMEPLAY)
+                gameState = new GameState(gameState.currPlayer, GameStage.GAMEPLAY)
                 break;
 
             case GameStage.GAMEPLAY:
-                const [x, y] = this.attackedCell;
+                const [x, y] = gameState.targetCell;
                 const enemyName = this.getEnemyPlayerName();
                 const updatedEnemy = enemy.attack(x, y);
 
                 if (updatedEnemy.cells[x][y] === CellType.KILLED) {
                     alert('Убил');
                     if (updatedEnemy.isLost()) {
-                        alert(`Победил игрок ${this.player.name}. Поздравляем! 🥳🎉`);
-                        gameController = new GameController(this.player, GameStage.ENDGAME);
+                        alert(`Победил игрок ${gameState.currPlayer.name}. Поздравляем! 🥳🎉`);
+                        gameState = new GameState(gameState.currPlayer, GameStage.ENDGAME);
                     } else {
-                        gameController = new GameController(this.player, GameStage.GAMEPLAY)
+                        gameState = new GameState(gameState.currPlayer, GameStage.GAMEPLAY)
                     }
                     players = {...players, [enemyName]: updatedEnemy}
                 }
 
                 alert('Промах');
-                gameController = new GameController(this.player, GameStage.MOVE_FINISHED)
+                gameState = new GameState(this.gameState.currPlayer, GameStage.MOVE_FINISHED);
                 break;
 
             case GameStage.MOVE_FINISHED:
-                gameController = new GameController(enemy, GameStage.MOVE_CONFIRMATION)
+                gameState = new GameState(enemy, GameStage.MOVE_CONFIRMATION);
                 break;
             default:
                 break;
         }
-        return {players, gameController}
+        return {players, gameState}
     }
 
     placeShip(playerNum: PlayerNum, x: number, y: number) {
         return (state: AppState) => {
-            if (this.player.name !== playerNum)
+            if (this.gameState.currPlayer.name !== playerNum)
                 return {players: state.players}
 
             const player = state.players[playerNum];
@@ -119,35 +118,27 @@ class GameController {
         }
     }
 
-    getEnemyPlayerName(): PlayerNum {
-        return this.player.name === PlayerNum.ONE ? PlayerNum.TWO : PlayerNum.ONE
-    }
-
     markCell(playerNum: PlayerNum, x: number, y: number) {
-        const updatedGameController = this.clone();
-        updatedGameController.attackedCell = isEquals(this.attackedCell, emptyTargetCell)
+        const updatedGameState = new GameState(this.gameState.currPlayer, this.gameState.currStage);
+        updatedGameState.targetCell = isEquals(this.gameState.targetCell, emptyTargetCell)
             ? [x, y]
             : emptyTargetCell;
         return () => ({
-            gameController: updatedGameController
+            gameState: updatedGameState
         })
     }
 
     getPlayerState(): string {
-        switch (this.stage) {
+        switch (this.gameState.currStage) {
             case GameStage.SHIP_PLACEMENT:
-                return `Осталось поставить кораблей: ${this.player.shipsRemainingForBuild()}`
+                return `Осталось поставить кораблей: ${this.gameState.currPlayer.shipsRemainingForBuild()}`
             default:
                 return ''
         }
     }
 
     isPlayerClickedOwnCell(playerNum: PlayerNum) {
-        return playerNum === this.player.name
-    }
-
-    isCellAttacked(x: number, y: number) {
-        return isEquals(this.attackedCell, [x, y])
+        return playerNum === this.gameState.currPlayer.name
     }
 
     isCombatGoing() {
@@ -155,7 +146,19 @@ class GameController {
             GameStage.GAMEPLAY,
             GameStage.MOVE_FINISHED
         ];
-        return combatGameStages.includes(this.stage)
+        return combatGameStages.includes(this.gameState.currStage)
+    }
+
+    isTargetCell(coords: CellCoords) {
+        return isEquals(this.gameState.targetCell, coords)
+    }
+
+    isShipPlacementNow() {
+        return this.gameState.currStage === GameStage.SHIP_PLACEMENT
+    }
+
+    isMoveConfirmationNow() {
+        return this.gameState.currStage === GameStage.MOVE_CONFIRMATION
     }
 }
 

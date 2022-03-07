@@ -44,6 +44,8 @@ class Board extends Component<BoardProps> {
             case GameStage.GAMEPLAY:
                 return !GameController.isTargetEmpty(this.gameState.targetCell)
                     && !PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName)
+            case GameStage.MOVE_FINISHED:
+                return !PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName)
         }
         return false
     }

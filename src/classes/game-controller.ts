@@ -25,6 +25,7 @@ class GameController {
     static getCellType(player: PlayerName, gameState: GameState): (cell: CellType, coords: CellCoords) => CellType {
         return (cell: CellType, coords: CellCoords): CellType => {
             switch (gameState.currStage) {
+                case GameStage.MOVE_FINISHED:
                 case GameStage.GAMEPLAY:
                     if (gameState.currPlayer === player)
                         return cell

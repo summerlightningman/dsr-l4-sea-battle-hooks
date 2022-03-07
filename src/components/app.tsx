@@ -86,8 +86,7 @@ class App extends Component<AppProps, AppState> {
                         gameState: {
                             ...state.gameState,
                             targetCell: emptyTargetCell,
-                            currPlayer: enemyPlayerName,
-                            currStage: GameStage.MOVE_CONFIRMATION
+                            currStage: GameStage.MOVE_FINISHED
                         },
                         arenas: {
                             ...state.arenas,
@@ -95,6 +94,15 @@ class App extends Component<AppProps, AppState> {
                         }
                     }))
                 }
+                return
+            case GameStage.MOVE_FINISHED:
+                return this.setState(state => ({
+                    gameState: {
+                        ...state.gameState,
+                        currStage: GameStage.MOVE_CONFIRMATION,
+                        currPlayer: PlayerController.getEnemyPlayerName(currPlayer)
+                    }
+                }));
         }
     }
 

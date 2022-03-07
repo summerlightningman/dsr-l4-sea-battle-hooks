@@ -40,6 +40,17 @@ class GameController {
         }
     }
 
+    static getShipCountInText(shipCount: number) {
+        const format = (text: string) => shipCount + ' ' + text;
+        const div10 = Math.floor(shipCount / 10);
+        if (div10 === 2)
+            return format('корабля')
+        else if (div10 === 1)
+            return format('корабль')
+        else
+            return format('кораблей')
+    }
+
     static getActionButtonName(gameStage: GameStage) {
         switch (gameStage) {
             case GameStage.SHIP_PLACEMENT:

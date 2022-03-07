@@ -54,21 +54,14 @@ class Board extends Component<BoardProps> {
         switch (this.gameState.currStage) {
             case GameStage.SHIP_PLACEMENT:
                 return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(this.arena)}`
+            case GameStage.MOVE_FINISHED:
             case GameStage.GAMEPLAY:
                 if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
                     return 'Ваш ход'
                 else {
-                    const shipCount = PlayerController.aliveShipsCount(this.arena)
-                    const msg = `Осталось ${shipCount} `
-                    const div10 = Math.floor(shipCount / 10);
-                    if (div10 === 2)
-                        return msg + 'корабля'
-                    else if (div10 === 1)
-                        return msg + 'корабль'
-                    else
-                        return msg + 'кораблей'
+                    const shipCount = PlayerController.aliveShipsCount(this.arena);
+                    return 'Осталось ' + GameController.getShipCountInText(shipCount);
                 }
-
             case GameStage.ENDGAME:
                 if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
                     return 'Победа!'

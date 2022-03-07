@@ -42,10 +42,10 @@ class GameController {
 
     static getShipCountInText(shipCount: number) {
         const format = (text: string) => shipCount + ' ' + text;
-        const div10 = Math.floor(shipCount / 10);
-        if (div10 === 2)
+        const mod10 = shipCount % 10;
+        if (mod10 === 2)
             return format('корабля')
-        else if (div10 === 1)
+        else if (mod10 === 1 && shipCount % 100 !== 11)
             return format('корабль')
         else
             return format('кораблей')

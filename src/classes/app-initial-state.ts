@@ -1,19 +1,20 @@
-import Player from "./player";
-
-import {PlayerList, PlayerNum} from "../types/player";
+import {PlayerName} from "../types/player";
+import type {PlayersArena} from '../types/player';
 import {AppState} from "../types/app";
 import GameState from "./game-state";
+import {generateArena} from "../functions";
+import {boardHeight, boardWidth} from "../config";
 
 class AppInitialState implements AppState {
     gameState: GameState;
-    players: PlayerList;
+    arenas: PlayersArena;
 
     constructor() {
-        this.players = {
-            [PlayerNum.ONE]: new Player(PlayerNum.ONE),
-            [PlayerNum.TWO]: new Player(PlayerNum.TWO)
+        this.gameState = new GameState(PlayerName.ONE);
+        this.arenas = {
+            [PlayerName.ONE]: generateArena(boardWidth, boardHeight),
+            [PlayerName.TWO]: generateArena(boardWidth, boardHeight)
         }
-        this.gameState = new GameState(this.players[PlayerNum.ONE]);
     }
 }
 

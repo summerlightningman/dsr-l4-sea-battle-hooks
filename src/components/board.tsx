@@ -1,58 +1,68 @@
-import {Component} from 'react';
+import React, {Component} from 'react';
 
 import Cell from "./cell";
+import ActionButton from "./action-button";
 
-import {BoardProps} from '../types/board';
-import {CellCoords} from "../types/game-controller";
+import type {BoardProps} from '../types/board';
+import {CellCoords, GameStage} from "../types/game-controller";
+import {PlayerName} from "../types/player";
+import type {Arena} from "../types/common";
 import {CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
-
 import {generateCoordinatePairs} from "../functions";
 
+import GameState from "../classes/game-state";
 import GameController from "../classes/game-controller";
-import Player from "../classes/player";
+import PlayerController from "../classes/player-controller";
 
 import '../styles/board.css';
 
 class Board extends Component<BoardProps> {
-    gameController: GameController;
-    player: Player;
+    playerName: PlayerName;
+    gameState: GameState;
+    arena: Arena;
+    getCellType: (cell: CellType, coords: CellCoords) => CellType;
+    isTargetCell: (coords: CellCoords) => boolean;
+    isBoardVisible: boolean;
 
     constructor(props: BoardProps) {
         super(props);
 
-        this.gameController = props.gameController;
-        this.player = props.player;
+        this.playerName = props.playerName;
+        this.gameState = props.gameState;
+        this.arena = props.arena;
 
-        this.isTargetCell = this.isTargetCell.bind(this);
-        this.isBoardHidden = this.isBoardHidden.bind(this);
+
+        this.getCellType = GameController.getCellType(this.playerName, props.gameState);
+        this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
+        this.isTargetCell = PlayerController.isTargetCell(props.gameState, props.playerName);
+        this.isBoardVisible = GameController.isBoardVisible(props.gameState, props.playerName);
     }
 
-    isTargetCell(coords: CellCoords) {
-        return !this.gameController.isPlayerClickedOwnCell(this.player.name) && this.gameController.isTargetCell(coords)
-    }
-
-    isBoardHidden() {
-        return this.gameController.gameState.currPlayer.name !== this.player.name
-            && this.gameController.isShipPlacementNow()
+    isReadyForNextStage() {
+        switch (this.gameState.currStage) {
+            case GameStage.SHIP_PLACEMENT:
+                return !PlayerController.isCanBuild(this.arena)
+            case GameStage.GAMEPLAY:
+                return !GameController.isTargetEmpty(this.gameState.targetCell)
+                    && !GameController.isPlayerActive(this.gameState.currPlayer, this.playerName)
+        }
+        return false
     }
 
     render() {
-        if (this.isBoardHidden())
+        if (!this.isBoardVisible) {
             return <></>
+        }
 
         const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
-            (coords) => {
+            coords => {
                 const [x, y] = coords;
-                let cellType = this.player.cells[x][y];
-                if (this.isTargetCell(coords))
-                    cellType = CellType.ATTACKED;
-                else if (this.gameController.isCombatGoing() && this.player.hasShipOn(coords))
-                    cellType = this.gameController.isPlayerClickedOwnCell(this.player.name) ? CellType.EMPTY : CellType.HAS_SHIP;
+                const cellType = this.getCellType(this.arena[x][y], coords);
 
                 return <Cell
-                    key={`${x},${y}`}
+                    key={`${x}${y}`}
                     cellType={cellType}
                     onCellClick={this.props.onCellClick(coords)}
                 />
@@ -60,8 +70,12 @@ class Board extends Component<BoardProps> {
         );
 
         return <div className="board">
-            <span className="board__player-name">{this.player.name}</span>
-            <span className="board__player-state">{this.gameController.getPlayerState()}</span>
+            <span className="board__player-name">{this.playerName}</span>
+            <ActionButton
+                onNextStage={this.props.onNextStage}
+                gameStage={this.gameState.currStage}
+                isReadyForNextStage={this.isReadyForNextStage()}
+            />
             <div className="cell-list"
                  style={
                      {

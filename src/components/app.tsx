@@ -4,74 +4,164 @@ import Header from './header';
 import Board from './board';
 import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
-import ActionButton from "./action-button";
 
-import {AppProps, AppState, CellClickHandler} from '../types/app';
-import {PlayerNum} from '../types/player';
-
+import {AppProps, AppState} from '../types/app';
 import AppInitialState from '../classes/app-initial-state';
 
+import type {CellCoords} from "../types/game-controller";
+import {GameStage} from "../types/game-controller";
+import {PlayerName} from '../types/player';
+
 import '../styles/app.css';
+import PlayerController from "../classes/player-controller";
+import {CellType} from "../types/cell";
+import {emptyTargetCell} from "../config";
+import {areEqual} from "../functions";
 import GameController from "../classes/game-controller";
-import {CellCoords} from "../types/game-controller";
 
 
 class App extends Component<AppProps, AppState> {
-    gameController: GameController;
-    onCellClick: CellClickHandler;
-
     constructor(props: AppProps) {
         super(props);
         this.state = new AppInitialState();
 
-        this.gameController = new GameController(this.state.gameState);
         this.setInitialState = this.setInitialState.bind(this);
-        this.goToNextState = this.goToNextState.bind(this);
-        this.onCellClick = this.gameController.isShipPlacementNow()
-            ? this.placeShip.bind(this)
-            : this.setTargetCell.bind(this);
+        this.goToNextStage = this.goToNextStage.bind(this);
+        this.setTarget = this.setTarget.bind(this);
+        this.placeShip = this.placeShip.bind(this);
+        this.getOnCellClick = this.getOnCellClick.bind(this);
     }
 
     setInitialState() {
         this.setState(new AppInitialState());
     }
 
-    placeShip(playerNum: PlayerNum) {
-        return (coords: CellCoords) =>
-            () => this.setState(this.gameController.placeShip(playerNum, coords));
+    goToNextStage() {
+        const {currStage, currPlayer, targetCell} = this.state.gameState;
+        switch (currStage) {
+            case GameStage.SHIP_PLACEMENT:
+                if (currPlayer === PlayerName.ONE)
+                    return this.setState(state => ({gameState: {...state.gameState, currPlayer: PlayerName.TWO}}));
+
+                return this.setState(state => ({
+                    gameState: {
+                        ...state.gameState,
+                        currPlayer: PlayerName.ONE,
+                        currStage: GameStage.MOVE_CONFIRMATION
+                    }
+                }));
+            case GameStage.MOVE_CONFIRMATION:
+                return this.setState(state => ({gameState: {...state.gameState, currStage: GameStage.GAMEPLAY}}))
+            case GameStage.GAMEPLAY:
+                const [x, y] = targetCell;
+                const enemyPlayerName = GameController.getEnemyPlayerName(currPlayer);
+                const updatedArena = PlayerController.attack(this.state.arenas[enemyPlayerName], targetCell);
+                if (updatedArena[x][y] === CellType.KILLED) {
+                    alert('Убил');
+                    if (PlayerController.isLost(updatedArena)) {
+                        alert(`Победил игрок ${currPlayer}. Поздравляем! 🥳🎉`)
+                        return this.setState(state => ({
+                            gameState: {
+                                ...state.gameState, currStage: GameStage.ENDGAME
+                            },
+                            arenas: {
+                                ...state.arenas,
+                                [enemyPlayerName]: updatedArena
+                            }
+                        }));
+                    }
+
+                    this.setState(state => ({
+                        gameState: {
+                            ...state.gameState,
+                            targetCell: emptyTargetCell
+                        },
+                        arenas: {
+                            ...state.arenas,
+                            [enemyPlayerName]: updatedArena
+                        }
+                    }))
+                } else {
+                    alert('Промах')
+                    return this.setState(state => ({
+                        gameState: {
+                            ...state.gameState,
+                            targetCell: emptyTargetCell,
+                            currPlayer: enemyPlayerName,
+                            currStage: GameStage.MOVE_CONFIRMATION
+                        },
+                        arenas: {
+                            ...state.arenas,
+                            [enemyPlayerName]: updatedArena
+                        }
+                    }))
+                }
+        }
     }
 
-    setTargetCell(playerNum: PlayerNum) {
-        return (coords: CellCoords) =>
-            () => this.setState(this.gameController.markCell(playerNum, coords));
+    setTarget(coords: CellCoords) {
+        return () => this.setState(state => ({
+            gameState: {
+                ...state.gameState,
+                targetCell: areEqual(coords, state.gameState.targetCell) ? emptyTargetCell : coords
+            }
+        }))
     }
 
-    goToNextState() {
-        return this.setState(this.gameController.goToNextStage);
+    placeShip(coords: CellCoords) {
+        return () => {
+            const player = this.state.gameState.currPlayer;
+            if (!PlayerController.isCanBuild(this.state.arenas[player]))
+                return
+
+            const [x, y] = coords;
+            const updatedArenas = JSON.parse(JSON.stringify(this.state.arenas));
+
+            updatedArenas[player][x][y] = updatedArenas[player][x][y] === CellType.EMPTY
+                ? CellType.HAS_SHIP
+                : CellType.EMPTY;
+            return this.setState({arenas: updatedArenas});
+        }
     }
 
+    getOnCellClick() {
+        switch (this.state.gameState.currStage) {
+            case GameStage.SHIP_PLACEMENT:
+                return this.placeShip
+            case GameStage.GAMEPLAY:
+                return this.setTarget
+            default:
+                return (_: CellCoords) => () => {
+                }
+        }
+    }
 
     render() {
-        const actionButton = <ActionButton
-            onNextStage={this.goToNextState}
-            gameStage={this.state.gameState.currStage}
-            isReadyForNextStage={this.gameController.isReadyForNextStage()}
+        const onCellClick = this.getOnCellClick();
+        const playerNameList = [PlayerName.ONE, PlayerName.TWO];
+
+        const confirmationScreen = <ConfirmationScreen
+            gameState={this.state.gameState}
+            onNextStage={this.goToNextStage}
         />;
-
-
-        const confirmationScreen = <ConfirmationScreen playerName={this.state.gameState.currPlayer.name}/>;
 
         const gameBoards = (
             <div className="game-boards">
                 {
-                    Object.values(this.state.players).map(
-                        player =>
-                            <Board
-                                player={player}
-                                key={player.name}
-                                gameController={this.gameController}
-                                onCellClick={this.onCellClick(player.name)}
+                    playerNameList.map(
+                        (playerName) => {
+                            const arena = this.state.arenas[playerName];
+                            const {gameState} = this.state;
+
+                            return <Board
+                                playerName={playerName}
+                                arena={arena}
+                                key={`${playerName}${+new Date()}`}
+                                onNextStage={this.goToNextStage}
+                                gameState={gameState}
+                                onCellClick={onCellClick}
                             />
+                        }
                     )
                 }
             </div>
@@ -84,14 +174,11 @@ class App extends Component<AppProps, AppState> {
                 />
                 <main className="main">
                     {
-                        this.gameController.isMoveConfirmationNow()
+                        this.state.gameState.currStage === GameStage.MOVE_CONFIRMATION
                             ? confirmationScreen
                             : gameBoards
                     }
                 </main>
-                <div className="controls">
-                    {actionButton}
-                </div>
                 <Footer/>
             </div>
         )

@@ -1,13 +1,13 @@
 import {CellCoords, GameStage} from "../types/game-controller";
-import Player from "./player";
 import {emptyTargetCell} from "../config";
+import {PlayerName} from "../types/player";
 
 class GameState {
     currStage: GameStage;
-    currPlayer: Player;
+    currPlayer: PlayerName;
     targetCell: CellCoords;
 
-    constructor(player: Player, stage: GameStage = GameStage.SHIP_PLACEMENT) {
+    constructor(player: PlayerName, stage: GameStage = GameStage.SHIP_PLACEMENT) {
         this.currStage = stage;
         this.currPlayer = player;
         this.targetCell = emptyTargetCell;

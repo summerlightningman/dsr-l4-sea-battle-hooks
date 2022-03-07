@@ -15,5 +15,5 @@ export const generateCoordinatePairs = (left: number, right: number): CellCoords
 export const generateArena = (width: BoardWidth, height: BoardHeight): Arena =>
     Array(height).fill(null).map(_ => Array(width).fill(null).map(_ => CellType.EMPTY));
 
-export const isEquals = <A>(left: A[], right: A[]): boolean =>
+export const areEqual = <A>(left: A[], right: A[]): boolean =>
     left.length === right.length && left.map((el, idx) => el === right[idx]).every(_ => _);

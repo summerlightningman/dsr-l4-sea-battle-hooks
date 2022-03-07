@@ -1,8 +1,15 @@
-import Player from "../classes/player";
+import PlayerController from "../classes/player-controller";
+import {Arena} from "./common";
 
-export const enum PlayerNum {
+export const enum PlayerName {
     ONE = 'Foo',
     TWO = 'Bar'
 }
 
-export type PlayerList = Record<PlayerNum, Player>
+export interface Player {
+    name: PlayerName,
+    cells: Arena
+}
+
+export type PlayerList = Record<PlayerName, PlayerController>;
+export type PlayersArena = Record<PlayerName, Arena>;

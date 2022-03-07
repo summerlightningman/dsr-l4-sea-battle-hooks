@@ -1,4 +1,4 @@
-import {generateArena, generateCoordinatePairs, isEquals} from "../functions";
+import {generateArena, generateCoordinatePairs, areEqual} from "../functions";
 import {CellType} from "../types/cell";
 
 
@@ -35,15 +35,15 @@ describe('isEquals works', () => {
     test('non-equal length arrays are not equal', () => {
         const a = [1, 2, 3];
         const b = [1, 2, 3, 4, 5];
-        expect(isEquals(a, b)).toBe(false);
-        expect(isEquals(b, a)).toBe(false);
+        expect(areEqual(a, b)).toBe(false);
+        expect(areEqual(b, a)).toBe(false);
     });
 
     test('two same arrays are equal', () => {
         const a = [1, 2, 3, 4, 5];
         const b = [1, 2, 3, 4, 5];
-        expect(isEquals(a, b)).toBe(true);
-        expect(isEquals(b, a)).toBe(true);
+        expect(areEqual(a, b)).toBe(true);
+        expect(areEqual(b, a)).toBe(true);
     });
 });
 

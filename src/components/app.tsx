@@ -7,7 +7,6 @@ import ConfirmationScreen from "./confirmation-screen";
 
 import AppInitialState from '../classes/app-initial-state';
 import PlayerController from "../classes/player-controller";
-import GameController from "../classes/game-controller";
 
 import {AppProps, AppState} from '../types/app';
 import type {CellCoords} from "../types/game-controller";
@@ -55,7 +54,7 @@ class App extends Component<AppProps, AppState> {
                 return this.setState(state => ({gameState: {...state.gameState, currStage: GameStage.GAMEPLAY}}))
             case GameStage.GAMEPLAY:
                 const [x, y] = targetCell;
-                const enemyPlayerName = GameController.getEnemyPlayerName(currPlayer);
+                const enemyPlayerName = PlayerController.getEnemyPlayerName(currPlayer);
                 const updatedArena = PlayerController.attack(this.state.arenas[enemyPlayerName], targetCell);
                 if (updatedArena[x][y] === CellType.KILLED) {
                     alert('Убил');

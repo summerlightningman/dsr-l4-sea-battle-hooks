@@ -8,22 +8,13 @@ import {areEqual} from "../functions";
 import GameState from "./game-state";
 
 class GameController {
-
     static isTargetEmpty(coords: CellCoords) {
         return areEqual(coords, emptyTargetCell)
     }
 
-    static getEnemyPlayerName(playerName: PlayerName): PlayerName {
-        return playerName === PlayerName.ONE ? PlayerName.TWO : PlayerName.ONE
-    }
-
-    static isPlayerActive(currPlayer: PlayerName, playerName: PlayerName) {
-        return playerName === currPlayer
-    }
-
-    static isBoardVisible(gameState: GameState, playerName: PlayerName){
-        if (gameState.currStage === GameStage.SHIP_PLACEMENT)
-            return gameState.currPlayer === playerName
+    static isBoardVisible({currStage, currPlayer}: GameState, playerName: PlayerName){
+        if (currStage === GameStage.SHIP_PLACEMENT)
+            return currPlayer === playerName
         return true
     }
 

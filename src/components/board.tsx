@@ -24,7 +24,6 @@ class Board extends Component<BoardProps> {
     gameState: GameState;
     arena: Arena;
     getCellType: (cell: CellType, coords: CellCoords) => CellType;
-    isTargetCell: (coords: CellCoords) => boolean;
     isBoardVisible: boolean;
 
     constructor(props: BoardProps) {
@@ -34,10 +33,8 @@ class Board extends Component<BoardProps> {
         this.gameState = props.gameState;
         this.arena = props.arena;
 
-
         this.getCellType = GameController.getCellType(this.playerName, props.gameState);
         this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
-        this.isTargetCell = PlayerController.isTargetCell(props.gameState, props.playerName);
         this.isBoardVisible = GameController.isBoardVisible(props.gameState, props.playerName);
         this.getMessage = this.getMessage.bind(this);
     }
@@ -48,7 +45,7 @@ class Board extends Component<BoardProps> {
                 return !PlayerController.isCanBuild(this.arena)
             case GameStage.GAMEPLAY:
                 return !GameController.isTargetEmpty(this.gameState.targetCell)
-                    && !GameController.isPlayerActive(this.gameState.currPlayer, this.playerName)
+                    && !PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName)
         }
         return false
     }
@@ -58,7 +55,7 @@ class Board extends Component<BoardProps> {
             case GameStage.SHIP_PLACEMENT:
                 return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(this.arena)}`
             case GameStage.GAMEPLAY:
-                if (GameController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
                     return 'Ваш ход'
                 else {
                     const shipCount = PlayerController.aliveShipsCount(this.arena)
@@ -73,7 +70,7 @@ class Board extends Component<BoardProps> {
                 }
 
             case GameStage.ENDGAME:
-                if (GameController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
                     return 'Победа!'
                 else
                     return 'Повезёт в другой раз ;)'

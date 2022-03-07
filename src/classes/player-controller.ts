@@ -4,8 +4,6 @@ import {CellCoords} from "../types/game-controller";
 import {PlayerName} from "../types/player";
 
 import {shipCount} from "../config";
-import GameState from "./game-state";
-import GameController from "./game-controller";
 
 
 class PlayerController {
@@ -14,9 +12,12 @@ class PlayerController {
             acc + val.reduce((acc_, val_) => val_ === CellType.HAS_SHIP ? acc_ + 1 : acc_, 0), 0);
     }
 
-    static isTargetCell(gameState: GameState, playerName: PlayerName) {
-        return (coords: CellCoords) => !GameController.isPlayerActive(gameState.currPlayer, playerName)
-            && GameController.isTargetCell(gameState.targetCell, coords)
+    static isPlayerActive(currPlayer: PlayerName, playerName: PlayerName) {
+        return playerName === currPlayer
+    }
+
+    static getEnemyPlayerName(playerName: PlayerName): PlayerName {
+        return playerName === PlayerName.ONE ? PlayerName.TWO : PlayerName.ONE
     }
 
     static shipsRemainingForBuild(cells: Arena) {

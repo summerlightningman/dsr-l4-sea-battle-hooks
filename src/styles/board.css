@@ -17,8 +17,10 @@
     text-shadow: 1px 1px darkgreen, -1px -1px aqua;
 }
 
-.board__player-state {
+.board__msg {
+    margin: 10px 0;
     font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
 }
 
 .cell-list {

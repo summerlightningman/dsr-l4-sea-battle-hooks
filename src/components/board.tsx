@@ -39,6 +39,7 @@ class Board extends Component<BoardProps> {
         this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
         this.isTargetCell = PlayerController.isTargetCell(props.gameState, props.playerName);
         this.isBoardVisible = GameController.isBoardVisible(props.gameState, props.playerName);
+        this.getMessage = this.getMessage.bind(this);
     }
 
     isReadyForNextStage() {
@@ -50,6 +51,33 @@ class Board extends Component<BoardProps> {
                     && !GameController.isPlayerActive(this.gameState.currPlayer, this.playerName)
         }
         return false
+    }
+
+    getMessage() {
+        switch (this.gameState.currStage) {
+            case GameStage.SHIP_PLACEMENT:
+                return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(this.arena)}`
+            case GameStage.GAMEPLAY:
+                if (GameController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                    return 'Ваш ход'
+                else {
+                    const shipCount = PlayerController.aliveShipsCount(this.arena)
+                    const msg = `Осталось ${shipCount} `
+                    const div10 = Math.floor(shipCount / 10);
+                    if (div10 === 2)
+                        return msg + 'корабля'
+                    else if (div10 === 1)
+                        return msg + 'корабль'
+                    else
+                        return msg + 'кораблей'
+                }
+
+            case GameStage.ENDGAME:
+                if (GameController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                    return 'Победа!'
+                else
+                    return 'Повезёт в другой раз ;)'
+        }
     }
 
     render() {
@@ -72,6 +100,7 @@ class Board extends Component<BoardProps> {
 
         return <div className="board">
             <span className="board__player-name">{this.playerName}</span>
+            <span className="board__msg">{this.getMessage()}</span>
             <ActionButton
                 onNextStage={this.props.onNextStage}
                 gameStage={this.gameState.currStage}

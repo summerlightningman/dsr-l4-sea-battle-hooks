@@ -5,19 +5,20 @@ import Board from './board';
 import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
 
-import {AppProps, AppState} from '../types/app';
 import AppInitialState from '../classes/app-initial-state';
+import PlayerController from "../classes/player-controller";
+import GameController from "../classes/game-controller";
 
+import {AppProps, AppState} from '../types/app';
 import type {CellCoords} from "../types/game-controller";
 import {GameStage} from "../types/game-controller";
 import {PlayerName} from '../types/player';
 
-import '../styles/app.css';
-import PlayerController from "../classes/player-controller";
 import {CellType} from "../types/cell";
 import {emptyTargetCell} from "../config";
 import {areEqual} from "../functions";
-import GameController from "../classes/game-controller";
+
+import '../styles/app.css';
 
 
 class App extends Component<AppProps, AppState> {

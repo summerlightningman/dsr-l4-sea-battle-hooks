@@ -1,9 +1,10 @@
 import {Arena} from "../types/common";
-import {shipCount} from "../config";
 import {CellType} from "../types/cell";
 import {CellCoords} from "../types/game-controller";
-import GameState from "./game-state";
 import {PlayerName} from "../types/player";
+
+import {shipCount} from "../config";
+import GameState from "./game-state";
 import GameController from "./game-controller";
 
 

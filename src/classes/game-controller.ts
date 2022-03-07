@@ -1,11 +1,11 @@
 import {CellCoords, GameStage} from "../types/game-controller";
 import {PlayerName} from "../types/player";
+import {CellType} from "../types/cell";
 
 import {emptyTargetCell} from "../config";
 
 import {areEqual} from "../functions";
 import GameState from "./game-state";
-import {CellType} from "../types/cell";
 
 class GameController {
 

@@ -7,7 +7,6 @@ import {gameTitle} from "../config";
 import '../styles/header.css';
 
 class Header extends Component<GameInfoProps> {
-
     render() {
         return <header className="header">
             <h1 className="header__text">{gameTitle}</h1>

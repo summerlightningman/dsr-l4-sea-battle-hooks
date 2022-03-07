@@ -10,6 +10,7 @@ import type {Arena} from "../types/common";
 import {CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
+
 import {generateCoordinatePairs} from "../functions";
 
 import GameState from "../classes/game-state";

@@ -68,18 +68,18 @@ class App extends Component<AppProps, AppState> {
                                 [enemyPlayerName]: updatedArena
                             }
                         }));
+                    } else {
+                        return this.setState(state => ({
+                            gameState: {
+                                ...state.gameState,
+                                targetCell: emptyTargetCell
+                            },
+                            arenas: {
+                                ...state.arenas,
+                                [enemyPlayerName]: updatedArena
+                            }
+                        }))
                     }
-
-                    this.setState(state => ({
-                        gameState: {
-                            ...state.gameState,
-                            targetCell: emptyTargetCell
-                        },
-                        arenas: {
-                            ...state.arenas,
-                            [enemyPlayerName]: updatedArena
-                        }
-                    }))
                 } else {
                     alert('Промах');
                     return this.setState(state => ({
@@ -94,7 +94,6 @@ class App extends Component<AppProps, AppState> {
                         }
                     }))
                 }
-                return
             case GameStage.MOVE_FINISHED:
                 return this.setState(state => ({
                     gameState: {

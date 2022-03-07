@@ -7,15 +7,15 @@ import ConfirmationScreen from "./confirmation-screen";
 
 import AppInitialState from '../classes/app-initial-state';
 import PlayerController from "../classes/player-controller";
+import GameController from "../classes/game-controller";
 
 import {AppProps, AppState} from '../types/app';
 import type {CellCoords} from "../types/game-controller";
 import {GameStage} from "../types/game-controller";
 import {PlayerName} from '../types/player';
-
 import {CellType} from "../types/cell";
+
 import {emptyTargetCell} from "../config";
-import {areEqual} from "../functions";
 
 import '../styles/app.css';
 
@@ -59,7 +59,7 @@ class App extends Component<AppProps, AppState> {
                 if (updatedArena[x][y] === CellType.KILLED) {
                     alert('Убил');
                     if (PlayerController.isLost(updatedArena)) {
-                        alert(`Победил игрок ${currPlayer}. Поздравляем! 🥳🎉`)
+                        alert(`Победил игрок ${currPlayer}. Поздравляем! 🥳🎉`);
                         return this.setState(state => ({
                             gameState: {
                                 ...state.gameState, currStage: GameStage.ENDGAME
@@ -82,7 +82,7 @@ class App extends Component<AppProps, AppState> {
                         }
                     }))
                 } else {
-                    alert('Промах')
+                    alert('Промах');
                     return this.setState(state => ({
                         gameState: {
                             ...state.gameState,
@@ -100,10 +100,10 @@ class App extends Component<AppProps, AppState> {
     }
 
     setTarget(coords: CellCoords) {
-        return () => this.setState(state => ({
+        return () => this.setState(({gameState}) => ({
             gameState: {
-                ...state.gameState,
-                targetCell: areEqual(coords, state.gameState.targetCell) ? emptyTargetCell : coords
+                ...gameState,
+                targetCell: GameController.isTargetCell(gameState.targetCell, coords) ? emptyTargetCell : coords
             }
         }))
     }

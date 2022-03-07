@@ -1,4 +1,4 @@
-import GameState from "../classes/game-state";
+import {GameState} from "./game-state";
 
 export interface ConfirmationScreenProps {
     gameState: GameState,

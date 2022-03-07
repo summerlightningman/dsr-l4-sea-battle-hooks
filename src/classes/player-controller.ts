@@ -1,6 +1,5 @@
 import {Arena} from "../types/common";
-import {CellType} from "../types/cell";
-import {CellCoords} from "../types/game-controller";
+import {CellCoords, CellType} from "../types/cell";
 import {PlayerName} from "../types/player";
 
 import {shipCount} from "../config";

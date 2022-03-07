@@ -3,7 +3,7 @@ import {Component} from "react";
 import {ConfirmationScreenProps} from "../types/confirmation-screen";
 
 import {PlayerName} from "../types/player";
-import {GameStage} from "../types/game-controller";
+import {GameStage} from "../types/game-state";
 
 import ActionButton from "./action-button";
 

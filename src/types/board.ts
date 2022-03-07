@@ -1,7 +1,7 @@
 import {PlayerName} from "./player";
 import {Arena} from "./common";
-import GameState from "../classes/game-state";
-import {CellCoords} from "./game-controller";
+import {GameState} from "./game-state";
+import {CellCoords} from "./cell";
 
 export interface BoardProps {
     playerName: PlayerName,

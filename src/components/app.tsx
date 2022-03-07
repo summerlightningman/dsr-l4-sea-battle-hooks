@@ -10,10 +10,9 @@ import PlayerController from "../classes/player-controller";
 import GameController from "../classes/game-controller";
 
 import {AppProps, AppState} from '../types/app';
-import type {CellCoords} from "../types/game-controller";
-import {GameStage} from "../types/game-controller";
+import {GameStage} from "../types/game-state";
 import {PlayerName} from '../types/player';
-import {CellType} from "../types/cell";
+import {CellCoords, CellType} from "../types/cell";
 
 import {emptyTargetCell} from "../config";
 

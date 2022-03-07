@@ -1,7 +1,7 @@
 import {CellType} from "./types/cell";
 import {Arena} from "./types/common";
 import {BoardHeight, BoardWidth} from "./types/board";
-import {CellCoords} from "./types/game-controller";
+import {CellCoords} from "./types/cell";
 
 export const generateCoordinatePairs = (left: number, right: number): CellCoords[] => {
     const arr: CellCoords[] = [];

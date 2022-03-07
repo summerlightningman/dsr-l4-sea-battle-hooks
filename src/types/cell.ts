@@ -11,4 +11,6 @@ export const enum CellType {
     KILLED
 }
 
+export type CellCoords = [number, number];
+
 export type CellSize = string;

@@ -1,6 +1,5 @@
 import {ShipCount} from "./types/common";
-import {CellCoords} from "./types/game-controller";
-import {CellSize} from "./types/cell";
+import {CellSize, CellCoords} from "./types/cell";
 import {BoardHeight, BoardWidth} from "./types/board";
 
 export const gameTitle = 'Игра "Морской бой"';

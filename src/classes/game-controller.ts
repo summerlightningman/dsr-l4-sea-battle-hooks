@@ -1,11 +1,11 @@
-import {CellCoords, GameStage} from "../types/game-controller";
+import {GameStage, GameState} from "../types/game-state";
 import {PlayerName} from "../types/player";
-import {CellType} from "../types/cell";
+import {CellType, CellCoords} from "../types/cell";
 
 import {emptyTargetCell} from "../config";
 
 import {areEqual} from "../functions";
-import GameState from "./game-state";
+
 
 class GameController {
     static isTargetEmpty(coords: CellCoords) {

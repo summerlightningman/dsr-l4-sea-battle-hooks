@@ -1,3 +1,3 @@
-export interface GameInfoProps {
+export interface HeaderProps {
     resetAll: () => void,
 }

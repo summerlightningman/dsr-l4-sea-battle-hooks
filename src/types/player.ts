@@ -1,4 +1,3 @@
-import PlayerController from "../classes/player-controller";
 import {Arena} from "./common";
 
 export const enum PlayerName {
@@ -11,5 +10,4 @@ export interface Player {
     cells: Arena
 }
 
-export type PlayerList = Record<PlayerName, PlayerController>;
 export type PlayersArena = Record<PlayerName, Arena>;

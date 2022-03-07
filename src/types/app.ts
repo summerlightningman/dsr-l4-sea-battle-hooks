@@ -1,5 +1,5 @@
 import type {PlayersArena} from "./player";
-import GameState from "../classes/game-state";
+import {GameState} from "./game-state";
 
 export type AppProps = object;
 

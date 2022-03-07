@@ -4,16 +4,14 @@ import Cell from "./cell";
 import ActionButton from "./action-button";
 
 import type {BoardProps} from '../types/board';
-import {CellCoords, GameStage} from "../types/game-controller";
+import {GameStage, GameState} from "../types/game-state";
 import {PlayerName} from "../types/player";
 import type {Arena} from "../types/common";
-import {CellType} from "../types/cell";
+import {CellCoords, CellType} from "../types/cell";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
 
 import {generateCoordinatePairs} from "../functions";
-
-import GameState from "../classes/game-state";
 import GameController from "../classes/game-controller";
 import PlayerController from "../classes/player-controller";
 

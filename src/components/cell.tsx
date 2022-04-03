@@ -1,35 +1,35 @@
-import {Component} from "react";
+import {FC, useMemo} from "react";
 
 import {CellProps, CellType} from "../types/cell";
 import {cellSize} from "../config";
 
 import "../styles/cell.css";
 
-class Cell extends Component<CellProps> {
-    constructor(props: CellProps) {
-        super(props);
+const Cell: FC<CellProps> = ({cellType, onCellClick}) => {
 
-        this.handleClick = this.handleClick.bind(this);
-    }
+    const typeClass = useMemo(() => {
+        switch (cellType) {
+            case CellType.EMPTY:
+                return ''
+            case CellType.HAS_SHIP:
+                return 'cell_has-ship'
+            case CellType.MISSED:
+                return 'cell_missed'
+            case CellType.ATTACKED:
+                return 'cell_attacked'
+            case CellType.KILLED:
+                return 'cell_killed'
+        }
+    }, [cellType]);
 
-    handleClick() {
-        this.props.onCellClick();
-    }
+    const handleCellClick = onCellClick || (() => {
+    });
 
-    render() {
-        const style: Record<CellType, string> = {
-            [CellType.EMPTY]: '',
-            [CellType.HAS_SHIP]: ' cell_has-ship',
-            [CellType.MISSED]: ' cell_missed',
-            [CellType.KILLED]: ' cell_killed',
-            [CellType.ATTACKED]: ' cell_attacked'
-        };
+    const className = 'cell ' + typeClass;
+    return <div className={className} style={{width: cellSize, height: cellSize}} onClick={handleCellClick}>
 
-        const className = 'cell' +  style[this.props.cellType];
-        return <div className={className} style={{width: cellSize, height: cellSize}} onClick={this.handleClick}>
+    </div>
 
-        </div>
-    }
 }
 
 export default Cell

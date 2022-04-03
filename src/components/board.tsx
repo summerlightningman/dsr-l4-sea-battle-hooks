@@ -1,13 +1,10 @@
-import React, {Component} from 'react';
+import React, {FC} from 'react';
 
 import Cell from "./cell";
 import ActionButton from "./action-button";
 
 import type {BoardProps} from '../types/board';
-import {GameStage, GameState} from "../types/game-state";
-import {PlayerName} from "../types/player";
-import type {Arena} from "../types/common";
-import {CellCoords, CellType} from "../types/cell";
+import {GameStage} from "../types/game-state";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
 
@@ -17,102 +14,88 @@ import PlayerController from "../classes/player-controller";
 
 import '../styles/board.css';
 
-class Board extends Component<BoardProps> {
-    playerName: PlayerName;
-    gameState: GameState;
-    arena: Arena;
-    getCellType: (cell: CellType, coords: CellCoords) => CellType;
-    isBoardVisible: boolean;
+const Board: FC<BoardProps> = ({playerName, targetCell, arena, currStage, currPlayer, onNextStage, onCellClick}) => {
+    if (!GameController.isBoardVisible({currStage, currPlayer}, playerName))
+        return <></>
 
-    constructor(props: BoardProps) {
-        super(props);
 
-        this.playerName = props.playerName;
-        this.gameState = props.gameState;
-        this.arena = props.arena;
+    const getCellType = GameController.getCellType(playerName, {currStage, currPlayer, targetCell});
 
-        this.getCellType = GameController.getCellType(this.playerName, props.gameState);
-        this.isReadyForNextStage = this.isReadyForNextStage.bind(this);
-        this.isBoardVisible = GameController.isBoardVisible(props.gameState, props.playerName);
-        this.getMessage = this.getMessage.bind(this);
-    }
 
-    isReadyForNextStage() {
-        switch (this.gameState.currStage) {
+    const isReadyForNextStage = () => {
+        switch (currStage) {
             case GameStage.SHIP_PLACEMENT:
-                return !PlayerController.isCanBuild(this.arena)
+                return !PlayerController.isCanBuild(arena)
             case GameStage.GAMEPLAY:
-                return !GameController.isTargetEmpty(this.gameState.targetCell)
-                    && !PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName)
+                return !GameController.isTargetEmpty(targetCell)
+                    && !PlayerController.isPlayerActive(currPlayer, playerName)
             case GameStage.MOVE_FINISHED:
-                return !PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName)
+                return !PlayerController.isPlayerActive(currPlayer, playerName)
         }
         return false
     }
 
-    getMessage() {
-        switch (this.gameState.currStage) {
+    const getMessage = () => {
+        switch (currStage) {
             case GameStage.SHIP_PLACEMENT:
-                return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(this.arena)}`
+                return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(arena)}`
             case GameStage.MOVE_FINISHED:
-                if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                if (PlayerController.isPlayerActive(currPlayer, playerName))
                     return 'Ход завершён'
                 else {
-                    const shipCount = PlayerController.aliveShipsCount(this.arena);
+                    const shipCount = PlayerController.aliveShipsCount(arena);
                     return 'Осталось ' + GameController.getShipCountInText(shipCount);
                 }
             case GameStage.GAMEPLAY:
-                if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                if (PlayerController.isPlayerActive(currPlayer, playerName))
                     return 'Ваш ход'
                 else {
-                    const shipCount = PlayerController.aliveShipsCount(this.arena);
+                    const shipCount = PlayerController.aliveShipsCount(arena);
                     return 'Осталось ' + GameController.getShipCountInText(shipCount);
                 }
             case GameStage.ENDGAME:
-                if (PlayerController.isPlayerActive(this.gameState.currPlayer, this.playerName))
+                if (PlayerController.isPlayerActive(currPlayer, playerName))
                     return 'Победа!'
                 else
                     return 'Повезёт в другой раз ;)'
         }
     }
 
-    render() {
-        if (!this.isBoardVisible) {
-            return <></>
-        }
 
-        const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
-            coords => {
-                const [x, y] = coords;
-                const cellType = this.getCellType(this.arena[x][y], coords);
 
-                return <Cell
-                    key={`${x}${y}`}
-                    cellType={cellType}
-                    onCellClick={this.props.onCellClick(coords)}
-                />
-            }
-        );
 
-        return <div className="board">
-            <span className="board__player-name">{this.playerName}</span>
-            <span className="board__msg">{this.getMessage()}</span>
-            <ActionButton
-                onNextStage={this.props.onNextStage}
-                gameStage={this.gameState.currStage}
-                isReadyForNextStage={this.isReadyForNextStage()}
+    const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
+        coords => {
+            const [x, y] = coords;
+            const cellType = getCellType(arena[x][y], coords);
+
+            return <Cell
+                key={`${x}${y}`}
+                cellType={cellType}
+                onCellClick={onCellClick(coords)}
             />
-            <div className="cell-list"
-                 style={
-                     {
-                         width: `calc(${boardWidth} * ${cellSize})`,
-                         height: `calc(${boardHeight} * ${cellSize})`
-                     }
-                 }>
-                {cellList}
-            </div>
-        </div>;
-    }
+        }
+    );
+
+    return <div className="board">
+        <span className="board__player-name">{playerName}</span>
+        <span className="board__msg">{getMessage()}</span>
+        <ActionButton
+            onNextStage={onNextStage}
+            gameStage={currStage}
+            isReadyForNextStage={isReadyForNextStage()}
+        />
+        <div className="cell-list"
+             style={
+                 {
+                     width: `calc(${boardWidth} * ${cellSize})`,
+                     height: `calc(${boardHeight} * ${cellSize})`
+                 }
+             }>
+            {cellList}
+        </div>
+    </div>;
 }
+
 
 export default Board

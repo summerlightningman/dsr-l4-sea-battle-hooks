@@ -1,6 +1,6 @@
 export interface CellProps {
     cellType: CellType,
-    onCellClick: () => void
+    onCellClick?: () => void
 }
 
 export const enum CellType {

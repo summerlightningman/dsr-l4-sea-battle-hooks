@@ -12,7 +12,7 @@ class GameController {
         return areEqual(coords, emptyTargetCell)
     }
 
-    static isBoardVisible({currStage, currPlayer}: GameState, playerName: PlayerName){
+    static isBoardVisible({currStage, currPlayer}: Pick<GameState, 'currPlayer' | 'currStage'>, playerName: PlayerName){
         if (currStage === GameStage.SHIP_PLACEMENT)
             return currPlayer === playerName
         return true

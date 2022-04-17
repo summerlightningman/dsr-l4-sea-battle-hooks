@@ -74,12 +74,12 @@ const App: FC = () => {
 
     }, [gameState.currStage, gameState.currPlayer, gameState.targetCell]);
 
-    const setTarget = (coords: CellCoords) => {
+    const setTarget = useCallback((coords: CellCoords) => {
         const targetCell = GameController.isTargetCell(gameState.targetCell, coords) ? emptyTargetCell : coords
         return () => patchGameState({targetCell})
-    }
+    }, [gameState.targetCell]);
 
-    const placeShip = (coords: CellCoords) => {
+    const placeShip = useCallback((coords: CellCoords) => {
         return () => {
             if (!PlayerController.isCanBuild(arenas[gameState.currPlayer]))
                 return
@@ -89,7 +89,7 @@ const App: FC = () => {
             currArena[x][y] = currArena[x][y] === CellType.EMPTY ? CellType.HAS_SHIP : CellType.EMPTY;
             return setArena({[gameState.currPlayer]: currArena})
         }
-    }
+    }, [gameState.currPlayer, arenas[gameState.currPlayer]]);
 
     const onCellClick = useMemo(() => {
         switch (gameState.currStage) {

@@ -7,8 +7,8 @@ import type {BoardProps} from '../types/board';
 import {GameStage} from "../types/game-state";
 
 import {boardHeight, boardWidth, cellSize} from "../config";
-
 import {generateCoordinatePairs} from "../functions";
+
 import GameController from "../classes/game-controller";
 import PlayerController from "../classes/player-controller";
 

@@ -1,120 +1,125 @@
-import React, {FC, useState} from 'react'
+import React, {FC, useCallback, useMemo, useReducer} from 'react'
 import Board from './board';
 import Footer from "./footer";
 import ConfirmationScreen from "./confirmation-screen";
 import PlayerController from "../classes/player-controller";
 import GameController from "../classes/game-controller";
 import {GameStage} from "../types/game-state";
-import {PlayerName, PlayersArena} from '../types/player';
+import {PlayerName} from '../types/player';
 import {CellCoords, CellType} from "../types/cell";
 
-import {boardHeight, boardWidth, emptyTargetCell} from "../config";
+import {emptyTargetCell} from "../config";
 
 import '../styles/app.css';
-import {generateArena} from "../functions";
 import Header from "./header";
+import {AppAction, AppActionType, AppState, SetArenaPayload, SetGameStatePayload} from "../types/app";
+import AppInitialState from "../classes/app-initial-state";
 
+const appReducer = (state: AppState = new AppInitialState(), action: AppAction): AppState => {
+    switch (action.type) {
+        case AppActionType.SET_GAME_STATE:
+            return {...state, gameState: {...state.gameState, ...action.payload}}
+        case AppActionType.RESET_ALL:
+            return new AppInitialState()
+        case AppActionType.SET_ARENA:
+            return {...state, arenas: {...state.arenas, ...action.payload}}
+    }
+    return state
+};
 
 const App: FC = () => {
-
-    const [currStage, setCurrStage] = useState<GameStage>(GameStage.SHIP_PLACEMENT);
-    const [currPlayer, setCurrPlayer] = useState<PlayerName>(PlayerName.ONE);
-    const [targetCell, setTargetCell] = useState<CellCoords>(emptyTargetCell);
-    const [arenas, setArenas] = useState<PlayersArena>({
-        [PlayerName.ONE]: generateArena(boardWidth, boardHeight),
-        [PlayerName.TWO]: generateArena(boardWidth, boardHeight)
-    });
-
-    const setInitialState = () => {
-        setCurrStage(GameStage.SHIP_PLACEMENT);
-        setCurrPlayer(PlayerName.ONE);
-        setTargetCell(emptyTargetCell);
-        setArenas({
-            [PlayerName.ONE]: generateArena(boardWidth, boardHeight),
-            [PlayerName.TWO]: generateArena(boardWidth, boardHeight)
-        });
-    };
-
-    const goToNextStage = () => {
-        switch (currStage) {
+    const [{arenas, gameState}, dispatch] = useReducer(appReducer, new AppInitialState());
+    const setGameState = useCallback(
+        (payload: SetGameStatePayload) =>
+            dispatch({type: AppActionType.SET_GAME_STATE, payload})
+        , []
+    );
+    const setArena = useCallback(
+        (payload: SetArenaPayload) =>
+            dispatch({type: AppActionType.SET_ARENA, payload})
+        , []
+    );
+    const goToNextStage = useMemo(() => {
+        switch (gameState.currStage) {
             case GameStage.SHIP_PLACEMENT:
-                if (currPlayer === PlayerName.ONE)
-                    return setCurrPlayer(PlayerName.TWO)
+                return () => {
+                    if (gameState.currPlayer === PlayerName.ONE)
+                        return setGameState({currPlayer: PlayerName.TWO})
 
-                setCurrPlayer(PlayerName.ONE)
-                setCurrStage(GameStage.MOVE_CONFIRMATION);
-                return
+                    return setGameState({currPlayer: PlayerName.ONE, currStage: GameStage.MOVE_CONFIRMATION})
+                }
             case GameStage.MOVE_CONFIRMATION:
-                return setCurrStage(GameStage.GAMEPLAY)
+                return () => setGameState({currStage: GameStage.GAMEPLAY})
             case GameStage.GAMEPLAY:
-                const [x, y] = targetCell;
-                const enemyPlayerName = PlayerController.getEnemyPlayerName(currPlayer);
-                const updatedArena = PlayerController.attack(arenas[enemyPlayerName], targetCell);
-                if (updatedArena[x][y] === CellType.KILLED) {
-                    alert('Убил');
-                    setArenas({...arenas, [enemyPlayerName]: updatedArena});
-                    if (PlayerController.isLost(updatedArena)) {
-                        alert(`Победил игрок ${currPlayer}. Поздравляем! 🥳🎉`);
-                        setCurrStage(GameStage.ENDGAME);
-
-                        return
+                return () => {
+                    const [x, y] = gameState.targetCell;
+                    const enemyPlayerName = PlayerController.getEnemyPlayerName(gameState.currPlayer);
+                    const updatedArena = PlayerController.attack(arenas[enemyPlayerName], gameState.targetCell);
+                    if (updatedArena[x][y] === CellType.KILLED) {
+                        alert('Убил');
+                        setArena({[enemyPlayerName]: updatedArena});
+                        if (PlayerController.isLost(updatedArena)) {
+                            alert(`Победил игрок ${gameState.currPlayer}. Поздравляем! 🥳🎉`);
+                            return dispatch({type: AppActionType.SET_GAME_STATE, payload: {currStage: GameStage.ENDGAME}})
+                        } else {
+                            return dispatch({type: AppActionType.SET_GAME_STATE, payload: {targetCell: emptyTargetCell}})
+                        }
                     } else {
-                        setTargetCell(emptyTargetCell);
+                        alert('Промах');
+                        setGameState({targetCell: emptyTargetCell, currStage: GameStage.MOVE_FINISHED});
+                        setArena({[enemyPlayerName]: updatedArena});
                         return
                     }
-                } else {
-                    alert('Промах');
-                    setTargetCell(emptyTargetCell);
-                    setCurrStage(GameStage.MOVE_FINISHED);
-                    setArenas({...arenas, [enemyPlayerName]: updatedArena})
-                    return
                 }
             case GameStage.MOVE_FINISHED:
-                setCurrStage(GameStage.MOVE_CONFIRMATION);
-                setCurrPlayer(PlayerController.getEnemyPlayerName(currPlayer));
-                return
+                return () => setGameState({
+                    currStage: GameStage.MOVE_CONFIRMATION,
+                    currPlayer: PlayerController.getEnemyPlayerName(gameState.currPlayer)
+                })
+            default:
+                return () => {}
         }
-    };
+
+    }, [gameState.currStage, gameState.currPlayer, gameState.targetCell]);
 
     const setTarget = (coords: CellCoords) => {
-        const target = GameController.isTargetCell(targetCell, coords) ? emptyTargetCell : coords
-        return () => setTargetCell(target);
+        const targetCell = GameController.isTargetCell(gameState.targetCell, coords) ? emptyTargetCell : coords
+        return () => setGameState({targetCell})
     }
 
     const placeShip = (coords: CellCoords) => {
         return () => {
-            if (!PlayerController.isCanBuild(arenas[currPlayer]))
+            if (!PlayerController.isCanBuild(arenas[gameState.currPlayer]))
                 return
 
             const [x, y] = coords;
-            const updatedArenas = JSON.parse(JSON.stringify(arenas));
+            const currArena = JSON.parse(JSON.stringify(arenas[gameState.currPlayer]));
 
-            updatedArenas[currPlayer][x][y] = updatedArenas[currPlayer][x][y] === CellType.EMPTY
-                ? CellType.HAS_SHIP
-                : CellType.EMPTY;
-            return setArenas(updatedArenas)
+            currArena[x][y] = currArena[x][y] === CellType.EMPTY ? CellType.HAS_SHIP : CellType.EMPTY;
+
+            return setArena({[gameState.currPlayer]: currArena})
         }
     }
 
-    const getOnCellClick = () => {
-        switch (currStage) {
+    const onCellClick = useMemo(() => {
+        switch (gameState.currStage) {
             case GameStage.SHIP_PLACEMENT:
                 return placeShip
             case GameStage.GAMEPLAY:
                 return setTarget
             default:
-                return (_: CellCoords) => () => {
-                }
+                return () => () => {}
         }
-    }
+    },[gameState.currStage, arenas, gameState.currPlayer]);
 
+    const setInitialState = useCallback(() => {
+        dispatch({type: AppActionType.RESET_ALL})
+    }, []);
 
-    const onCellClick = getOnCellClick();
     const playerNameList = [PlayerName.ONE, PlayerName.TWO];
 
     const confirmationScreen = <ConfirmationScreen
-        currPlayer={currPlayer}
-        currStage={currStage}
+        gameState={gameState}
         onNextStage={goToNextStage}
     />;
 
@@ -125,15 +130,12 @@ const App: FC = () => {
                     (playerName) => {
                         const arena = arenas[playerName];
 
-
                         return <Board
                             playerName={playerName}
                             arena={arena}
                             key={`${playerName}${+new Date()}`}
                             onNextStage={goToNextStage}
-                            currStage={currStage}
-                            currPlayer={currPlayer}
-                            targetCell={targetCell}
+                            gameState={gameState}
                             onCellClick={onCellClick}
                         />
                     }
@@ -149,7 +151,7 @@ const App: FC = () => {
             />
             <main className="main">
                 {
-                    currStage === GameStage.MOVE_CONFIRMATION
+                    gameState.currStage === GameStage.MOVE_CONFIRMATION
                         ? confirmationScreen
                         : gameBoards
                 }

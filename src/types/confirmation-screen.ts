@@ -1,8 +1,6 @@
-import {GameStage} from "./game-state";
-import {PlayerName} from "./player";
+import {GameState} from "./game-state";
 
 export interface ConfirmationScreenProps {
-    currStage: GameStage,
-    currPlayer: PlayerName,
+    gameState: GameState,
     onNextStage: () => void
 }

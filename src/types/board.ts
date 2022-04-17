@@ -1,14 +1,12 @@
 import {PlayerName} from "./player";
 import {Arena} from "./common";
-import {GameStage} from "./game-state";
+import {GameState} from "./game-state";
 import {CellCoords} from "./cell";
 
 export interface BoardProps {
     playerName: PlayerName,
     arena: Arena,
-    currStage: GameStage,
-    currPlayer: PlayerName,
-    targetCell: CellCoords,
+    gameState: GameState,
     onNextStage: () => void,
     onCellClick: (coords: CellCoords) => () => void
 }

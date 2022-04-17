@@ -14,12 +14,14 @@ import PlayerController from "../classes/player-controller";
 
 import '../styles/board.css';
 
-const Board: FC<BoardProps> = ({playerName, targetCell, arena, currStage, currPlayer, onNextStage, onCellClick}) => {
+const Board: FC<BoardProps> = ({playerName, arena, gameState, onNextStage, onCellClick}) => {
+    const {currStage, currPlayer, targetCell} = gameState;
+
     if (!GameController.isBoardVisible({currStage, currPlayer}, playerName))
         return <></>
 
 
-    const getCellType = GameController.getCellType(playerName, {currStage, currPlayer, targetCell});
+    const getCellType = GameController.getCellType(playerName, gameState);
 
 
     const isReadyForNextStage = () => {
@@ -60,9 +62,6 @@ const Board: FC<BoardProps> = ({playerName, targetCell, arena, currStage, currPl
                     return 'Повезёт в другой раз ;)'
         }
     }
-
-
-
 
     const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
         coords => {

@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useMemo} from 'react';
 
 import Cell from "./cell";
 import ActionButton from "./action-button";
@@ -16,15 +16,7 @@ import '../styles/board.css';
 
 const Board: FC<BoardProps> = ({playerName, arena, gameState, onNextStage, onCellClick}) => {
     const {currStage, currPlayer, targetCell} = gameState;
-
-    if (!GameController.isBoardVisible({currStage, currPlayer}, playerName))
-        return <></>
-
-
-    const getCellType = GameController.getCellType(playerName, gameState);
-
-
-    const isReadyForNextStage = () => {
+    const isReadyForNextStage = useMemo(() => {
         switch (currStage) {
             case GameStage.SHIP_PLACEMENT:
                 return !PlayerController.isCanBuild(arena)
@@ -35,9 +27,8 @@ const Board: FC<BoardProps> = ({playerName, arena, gameState, onNextStage, onCel
                 return !PlayerController.isPlayerActive(currPlayer, playerName)
         }
         return false
-    }
-
-    const getMessage = () => {
+    }, [currStage]);
+    const message = useMemo(() => {
         switch (currStage) {
             case GameStage.SHIP_PLACEMENT:
                 return `Осталось расположить кораблей: ${PlayerController.shipsRemainingForBuild(arena)}`
@@ -61,7 +52,11 @@ const Board: FC<BoardProps> = ({playerName, arena, gameState, onNextStage, onCel
                 else
                     return 'Повезёт в другой раз ;)'
         }
-    }
+    }, [currStage]);
+    const getCellType = useMemo(() => GameController.getCellType(playerName, gameState), [playerName, gameState]);
+
+    if (!GameController.isBoardVisible({currStage, currPlayer}, playerName))
+        return <></>
 
     const cellList = generateCoordinatePairs(boardWidth, boardHeight).map(
         coords => {
@@ -78,11 +73,11 @@ const Board: FC<BoardProps> = ({playerName, arena, gameState, onNextStage, onCel
 
     return <div className="board">
         <span className="board__player-name">{playerName}</span>
-        <span className="board__msg">{getMessage()}</span>
+        <span className="board__msg">{message}</span>
         <ActionButton
             onNextStage={onNextStage}
             gameStage={currStage}
-            isReadyForNextStage={isReadyForNextStage()}
+            isReadyForNextStage={isReadyForNextStage}
         />
         <div className="cell-list"
              style={
